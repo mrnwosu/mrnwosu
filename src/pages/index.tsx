@@ -15,7 +15,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Personal/Professional Website for Ike Nwosu" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-900 via to-slate-900">
       </main>
     </>
   );
