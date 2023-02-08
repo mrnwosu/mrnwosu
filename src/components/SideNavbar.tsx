@@ -33,7 +33,7 @@ export const SideNavBar = function(){
             <SideIconLink
                 href="/#"
                 icon={Diversity3SharpIcon}
-                description={'Fields'}
+                description={'Friends'}
                 size={36}
             />
             <SideIconLink

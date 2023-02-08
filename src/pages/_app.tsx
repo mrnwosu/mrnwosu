@@ -16,7 +16,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <div className=" bg-slate-800 text-white">
+      <div className=" text-white">
         <SideNavBar/>
         <div>
           <div className=" fixed flex justify-end w-screen h-12 px-4">
@@ -39,7 +39,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
               size={36}
             />
           </div>
-          <Component {...pageProps}/>
+          <div className=" bg-gradient-to-b h-screen w-screen from-slate-900 via-slate-800 to-slate-900">
+              <Component {...pageProps}/>
+          </div>
         </div>
       </div>
     </SessionProvider>
