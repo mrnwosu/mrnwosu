@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer base{
+
+    body {
+        @apply from-slate-900;
+        @apply via-slate-800;  
+        @apply to-slate-900;
+    }
+
+}

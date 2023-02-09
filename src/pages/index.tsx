@@ -1,4 +1,5 @@
 import { type NextPage } from "next";
+import { useEffect, useState } from 'react'
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -6,7 +7,20 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "../utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+
+  const greetings = ['Hello!', '¡Bojour!', '¡Hola!', 'Hallo!', '¡Ola!']
+  const [greetingIndex, setIndex] = useState(0)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIndex((greetingIndex + 1) % 5);
+    }, 1000)
+  }, [greetingIndex]);
+
+  
+
+
+  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
   return (
     <>
@@ -16,8 +30,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen">
-        <div className=" bg-slate-700 w-5/6 h-4/5 absolute left-36 top-14">
-          <h1 className=" text-7xl">Hello!!!</h1>
+        <div className="w-5/6 h-4/5 absolute left-36 top-14">
+          <h1 className=" text-8xl relative left-10 top-10">{greetings[greetingIndex]}</h1>
         </div>
       </main>
     </>
