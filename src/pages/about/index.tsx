@@ -16,8 +16,8 @@ const About: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen">
-        <div className="w-5/6 h-4/5 left-36 top-14">
-          <h1 className=" text-8xl relative left-10 top-10">About me</h1>
+        <div className="w-5/6 h-4/5 relative left-36 top-14">
+          <h1 className=" text-8xl">About me</h1>
           <p>
             I am a Software and Web Developer that is well-versed in using the latest technologies and tools to develop efficient and intuitive applications. I am a creative problem solver who is able to generate innovative solutions to a wide range of development challenges.
           </p>
