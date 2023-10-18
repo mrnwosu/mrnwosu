@@ -25,7 +25,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <div className=" text-white">
-        <SideNavBar/>
+        {/* <SideNavBar/> */}
         <div>
           <div className=" fixed flex justify-end w-screen h-12 px-4">
             {topLinkProps.map((l, i) => {
@@ -39,7 +39,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               />)
             })}
           </div>
-          <div className=" bg-gradient-to-b h-screen w-screen bg-red-500">
+          <div className=" bg-gradient-to-b h-screen w-screen">
               <Component {...pageProps}/>
           </div>
         </div>
