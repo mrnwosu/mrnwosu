@@ -10,9 +10,13 @@ const Home: NextPage = () => {
   const [greetingIndex, setIndex] = useState(0);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIndex((greetingIndex + 1) % 5);
-    }, 1000);
+    const images = document.querySelectorAll(".profile-images");
+    images.forEach((image) => {
+      image.addEventListener("DOMContentLoaded", (s) => {
+        image.classList.remove("opacity-0");
+        image.classList.add("opacity-100");
+      });
+    });
   }, [greetingIndex]);
 
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -27,19 +31,32 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-screen flex-row">
-        {/* <div className=" bg-black opacity-30 relative w-screen h-5/6 overflow-hidden">
-          <video autoPlay muted loop src="./promo.mp4" className=" object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10"></video>
-        </div> */}
-        <div className=" w-1/3 bg-slate-500"></div>
-        <div className=" w-2/3 bg-slate-900">
+      <main className="flex h-screen w-screen flex-row bg-gradient-to-r from-claw_ocho to-claw_nueve">
+        <div className="flex w-1/2 items-center justify-center ">
+          <div className=" flex flex-col items-center justify-center gap-y-4">
+            <div className=" text-7xl font-bold text-white">
+              {greetings[greetingIndex]}
+            </div>
+            <div className=" text-5xl font-bold text-claw_sies flex-grow">
+              My name is{" "}
+              <span className=" text-7xl text-claw_dos">Ike Nwosu</span>
+            </div>
+            <div className=" text-2xl font-bold text-claw_sies">
+              I does this.
+            </div>
+          </div>
+        </div>
+        <div className="flex w-1/2 items-center justify-center ">
           <div className=" grid w-[27em] grid-cols-3 grid-rows-4 gap-2 ">
             {Array(12)
               .fill(0)
               .map((_, i) => {
                 const number = i < 9 ? `00${i + 1}` : `0${i + 1}`;
                 return (
-                  <div key={i} className=" overflow-hidden">
+                  <div
+                    key={i}
+                    className=" profile-images relative shadow-md shadow-claw_diez before:absolute before:inset-0 before:-z-10 before:h-full before:w-full before:scale-125 before:bg-black "
+                  >
                     <Image
                       src={`/brokenImage1/image_part_${number}.jpg`}
                       alt="Author Image"

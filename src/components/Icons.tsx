@@ -27,7 +27,7 @@ export const TopIconLink = function(props: props){
     return (
         <Link
             href={props.href}
-            className=" py-3 px-1 flex flex-col items-center text-gray-300 hover:text-white rounded-xl"
+            className=" py-3 px-1 flex flex-col items-center text-claw_diez hover:text-white rounded-xl"
         >
             <props.icon sx={{fontSize: props.size}}/>
         </Link>
