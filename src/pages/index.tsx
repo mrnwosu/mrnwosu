@@ -4,11 +4,45 @@ import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { api } from "../utils/api";
-import { set } from "zod";
+
+import InstagramIcon from "@mui/icons-material/Instagram";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import GitHub from "@mui/icons-material/GitHub";
+import { TopIconLink } from "../components/Icons";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { SvgIconTypeMap } from "@mui/material";
+
+type TopLinkProps = {
+  href: string;
+  icon: OverridableComponent<SvgIconTypeMap> & { muiName: string };
+  description: string;
+  size: number;
+};
 
 const Home: NextPage = () => {
   const loadedProfileImageCount = useRef(0);
-  
+
+  const thangs: TopLinkProps[] = [
+    {
+      href: "https://github.com/mrnwosu",
+      icon: GitHub,
+      description: "",
+      size: 56,
+    },
+    {
+      href: "https://www.linkedin.com/in/ikenwosu/",
+      icon: LinkedInIcon,
+      description: "",
+      size: 56,
+    },
+    {
+      href: "https://www.instagram.com/naijapsi5/",
+      icon: InstagramIcon,
+      description: "",
+      size: 56,
+    },
+  ];
+
   useEffect(() => {
     document.querySelectorAll(".word-container").forEach((word) => {
       word.classList.remove("opacity-0");
@@ -27,7 +61,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen w-screen flex-row bg-gradient-to-tr from-gray-600 to-claw_nueve">
-        <div className="flex sm:w-1/2 md:w-1/2 lg:w-1/2 items-center justify-center ">
+        <div className="flex items-center justify-center sm:w-1/2 md:w-1/2 lg:w-1/2 ">
           <div className=" flex flex-col items-center justify-center gap-y-4 font-bold">
             <div className=" word-container text-7xl text-claw_siete opacity-0 transition delay-300 duration-[1500ms]">
               <p>Hello!</p>
@@ -41,6 +75,19 @@ const Home: NextPage = () => {
               </div>
               <div className=" word-container opacity-0 transition delay-700 duration-[1500ms]">
                 <p className="text-2xl text-claw_siete ">I does this.</p>
+              </div>
+              <div className=" mt-8 flex flex-row h-12 gap-8 px-4">
+                {thangs.map((l, i) => {
+                  return (
+                    <TopIconLink
+                      key={i}
+                      href={l.href}
+                      icon={l.icon}
+                      description={l.description}
+                      size={l.size}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
