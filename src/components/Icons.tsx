@@ -2,7 +2,6 @@ import Link from "next/link"
 import type { OverridableComponent } from "@mui/material/OverridableComponent"
 import type { SvgIconTypeMap } from "@mui/material/SvgIcon"
 
-
 type props = {
     href: string, 
     description: string,
@@ -10,24 +9,11 @@ type props = {
     size: number
 }
 
-export const SideIconLink = function(props: props){
-    return (
-        <Link
-            href={props.href}
-            className=" py-3 px-1 flex flex-col items-center text-emerald-700 bg-slate-800 rounded-xl hover:text-white hover:bg-slate-700"
-            
-        >
-            <props.icon sx={{fontSize: props.size}}/>
-            <p className=" text-xs">{props.description}</p>
-        </Link>
-    )
-}
-
 export const TopIconLink = function(props: props){
     return (
         <Link
             href={props.href}
-            className=" py-3 px-1 flex flex-col items-center transition duration-300  text-claw_diez hover:text-claw_nueve rounded-xl"
+            className=" py-3 px-1 flex flex-col items-center transition duration-300 text-claw_diez hover:text-claw_nueve rounded-xl"
         >
             <props.icon sx={{fontSize: props.size}}/>
         </Link>

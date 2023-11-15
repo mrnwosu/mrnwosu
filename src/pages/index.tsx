@@ -9,8 +9,8 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHub from "@mui/icons-material/GitHub";
 import { TopIconLink } from "../components/Icons";
-import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { SvgIconTypeMap } from "@mui/material";
+import type { OverridableComponent } from "@mui/material/OverridableComponent";
+import type { SvgIconTypeMap } from "@mui/material";
 
 type TopLinkProps = {
   href: string;
@@ -48,6 +48,14 @@ const Home: NextPage = () => {
       word.classList.remove("opacity-0");
       word.classList.add("opacity-100");
     });
+
+    const icons = document.querySelector(".icons");
+    console.log({ icons })
+    icons?.classList.remove("opacity-0");
+    icons?.classList.add("opacity-100");
+
+    icons?.classList.remove("translate-y-4");
+
   }, []);
 
   return (
@@ -76,7 +84,7 @@ const Home: NextPage = () => {
               <div className=" word-container opacity-0 transition delay-700 duration-[1500ms]">
                 <p className="text-2xl text-claw_siete ">I does this.</p>
               </div>
-              <div className=" mt-8 flex flex-row h-12 gap-8 px-4">
+              <div className=" icons mt-8 flex h-12 flex-row gap-8 px-4 opacity-0 transition delay-1000 ease-out translate-y-4 duration-[1500ms]">
                 {thangs.map((l, i) => {
                   return (
                     <TopIconLink
@@ -115,9 +123,6 @@ const Home: NextPage = () => {
                       className="profile-image"
                       onLoad={() => {
                         loadedProfileImageCount.current++;
-                        console.log({
-                          currentLoaded: loadedProfileImageCount.current,
-                        });
                         if (loadedProfileImageCount.current === 12) {
                           const allProfileImages = document.querySelectorAll(
                             ".profile-image-container"
