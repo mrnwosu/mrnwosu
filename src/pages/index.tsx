@@ -7,20 +7,13 @@ import { api } from "../utils/api";
 import { set } from "zod";
 
 const Home: NextPage = () => {
-  const greetings = ["Hello!", "¡Bojour!", "¡Hola!", "Hallo!", "¡Ola!"];
-  const greetingIndexRef = useRef(0);
   const loadedProfileImageCount = useRef(0);
-
+  
   useEffect(() => {
     document.querySelectorAll(".word-container").forEach((word) => {
       word.classList.remove("opacity-0");
       word.classList.add("opacity-100");
     });
-
-    setInterval(() => {
-      greetingIndexRef.current =
-        (greetingIndexRef.current + 1) % greetings.length;
-    }, 3000);
   }, []);
 
   return (
@@ -34,10 +27,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen w-screen flex-row bg-gradient-to-tr from-gray-600 to-claw_nueve">
-        <div className="flex w-1/2 items-center justify-center ">
+        <div className="flex sm:w-1/2 md:w-1/2 lg:w-1/2 items-center justify-center ">
           <div className=" flex flex-col items-center justify-center gap-y-4 font-bold">
             <div className=" word-container text-7xl text-claw_siete opacity-0 transition delay-300 duration-[1500ms]">
-              <p>{greetings[greetingIndexRef.current]}</p>
+              <p>Hello!</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2">
               <div className=" word-container tranistion text-right text-5xl text-claw_siete opacity-0 delay-500 duration-[1500ms]">
