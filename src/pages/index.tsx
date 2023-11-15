@@ -4,6 +4,7 @@ import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { api } from "../utils/api";
+import { set } from "zod";
 
 const Home: NextPage = () => {
   const greetings = ["Hello!", "¡Bojour!", "¡Hola!", "Hallo!", "¡Ola!"];
@@ -15,6 +16,11 @@ const Home: NextPage = () => {
       word.classList.remove("opacity-0");
       word.classList.add("opacity-100");
     });
+
+    setInterval(() => {
+      greetingIndexRef.current =
+        (greetingIndexRef.current + 1) % greetings.length;
+    }, 3000);
   }, []);
 
   return (
