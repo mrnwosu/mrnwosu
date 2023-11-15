@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
@@ -7,19 +7,15 @@ import { api } from "../utils/api";
 
 const Home: NextPage = () => {
   const greetings = ["Hello!", "¡Bojour!", "¡Hola!", "Hallo!", "¡Ola!"];
-  const [greetingIndex, setIndex] = useState(0);
+  const greetingIndexRef = useRef(0);
+  const loadedProfileImageCount = useRef(0);
 
   useEffect(() => {
-    const images = document.querySelectorAll(".profile-images");
-    images.forEach((image) => {
-      image.addEventListener("DOMContentLoaded", (s) => {
-        image.classList.remove("opacity-0");
-        image.classList.add("opacity-100");
-      });
+    document.querySelectorAll(".word-container").forEach((word) => {
+      word.classList.remove("opacity-0");
+      word.classList.add("opacity-100");
     });
-  }, [greetingIndex]);
-
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  }, []);
 
   return (
     <>
@@ -31,18 +27,22 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-screen w-screen flex-row bg-gradient-to-r from-claw_ocho to-claw_nueve">
+      <main className="flex h-screen w-screen flex-row bg-gradient-to-tr from-gray-600 to-claw_nueve">
         <div className="flex w-1/2 items-center justify-center ">
-          <div className=" flex flex-col items-center justify-center gap-y-4">
-            <div className=" text-7xl font-bold text-white">
-              {greetings[greetingIndex]}
+          <div className=" flex flex-col items-center justify-center gap-y-4 font-bold">
+            <div className=" word-container text-7xl text-claw_siete opacity-0 transition delay-300 duration-[1500ms]">
+              <p>{greetings[greetingIndexRef.current]}</p>
             </div>
-            <div className=" text-5xl font-bold text-claw_sies flex-grow">
-              My name is{" "}
-              <span className=" text-7xl text-claw_dos">Ike Nwosu</span>
-            </div>
-            <div className=" text-2xl font-bold text-claw_sies">
-              I does this.
+            <div className="flex flex-col items-center justify-center gap-2">
+              <div className=" word-container tranistion text-right text-5xl text-claw_siete opacity-0 delay-500 duration-[1500ms]">
+                <p className="  ">
+                  My name is
+                  <span className=" text-claw_dos"> Ike Nwosu</span>
+                </p>
+              </div>
+              <div className=" word-container opacity-0 transition delay-700 duration-[1500ms]">
+                <p className="text-2xl text-claw_siete ">I does this.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -52,10 +52,13 @@ const Home: NextPage = () => {
               .fill(0)
               .map((_, i) => {
                 const number = i < 9 ? `00${i + 1}` : `0${i + 1}`;
+                const delays = [400, 800, 1200];
+                const time = delays[i % 3] ?? 400;
+                const delay = `delay-[${time}ms]`;
                 return (
                   <div
                     key={i}
-                    className=" profile-images relative shadow-md shadow-claw_diez before:absolute before:inset-0 before:-z-10 before:h-full before:w-full before:scale-125 before:bg-black "
+                    className={`${delay} profile-image-container relative opacity-0 shadow-md shadow-claw_diez transition duration-[1500ms] before:bg-black `}
                   >
                     <Image
                       src={`/brokenImage1/image_part_${number}.jpg`}
@@ -63,7 +66,22 @@ const Home: NextPage = () => {
                       width={140}
                       height={157.89}
                       sizes="100%"
-                      className="t"
+                      className="profile-image"
+                      onLoad={() => {
+                        loadedProfileImageCount.current++;
+                        console.log({
+                          currentLoaded: loadedProfileImageCount.current,
+                        });
+                        if (loadedProfileImageCount.current === 12) {
+                          const allProfileImages = document.querySelectorAll(
+                            ".profile-image-container"
+                          );
+                          allProfileImages.forEach((image) => {
+                            image.classList.remove("opacity-0");
+                            image.classList.add("opacity-100");
+                          });
+                        }
+                      }}
                     />
                   </div>
                 );

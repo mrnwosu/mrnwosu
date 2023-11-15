@@ -8,8 +8,6 @@ import GitHub from "@mui/icons-material/GitHub";
 
 import { api } from "../utils/api";
 import "../styles/globals.css";
-import { SideNavBar } from "../components/SideNavbar";
-import { string } from "zod";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
