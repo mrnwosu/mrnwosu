@@ -15,6 +15,25 @@ module.exports = {
         claw_nueve: "#F5DCC6",
         claw_diez: "#3E4454",
       },
+      animation: {
+        blob_move: "blob_move 10s linear infinite",
+      },
+      keyframes: {
+        blob_move: {
+          "0%, 100%": {
+            transform: "translate(0px, 0px)",
+          },
+          "25%": {
+            transform: "translate(80px, 80px)",
+          },
+          "50%": {
+            transform: "translate(0px, 100px)",
+          },
+          "75%": {
+            transform: "translate(-80px, 80px)",
+          },
+        },
+      },
     },
   },
   plugins: [],

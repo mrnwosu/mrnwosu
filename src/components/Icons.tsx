@@ -1,21 +1,21 @@
-import Link from "next/link"
-import type { OverridableComponent } from "@mui/material/OverridableComponent"
-import type { SvgIconTypeMap } from "@mui/material/SvgIcon"
+import Link from "next/link";
+import type { OverridableComponent } from "@mui/material/OverridableComponent";
+import type { SvgIconTypeMap } from "@mui/material/SvgIcon";
 
-type props = {
-    href: string, 
-    description: string,
-    icon: OverridableComponent<SvgIconTypeMap>,
-    size: number
-}
+export type LinkProps = {
+  href: string;
+  description: string;
+  icon: OverridableComponent<SvgIconTypeMap>;
+  size: number;
+};
 
-export const TopIconLink = function(props: props){
-    return (
-        <Link
-            href={props.href}
-            className=" py-3 px-1 flex flex-col items-center transition duration-300 text-claw_diez hover:text-claw_nueve rounded-xl"
-        >
-            <props.icon sx={{fontSize: props.size}}/>
-        </Link>
-    ) 
-}
+export const TopIconLink = function (props: LinkProps) {
+  return (
+    <Link
+      href={props.href}
+      className={` flex flex-col items-center rounded-xl py-3 px-1 text-claw_diez transition duration-100 ease-in hover:text-claw_nueve`}
+    >
+      <props.icon sx={{ fontSize: props.size }} />
+    </Link>
+  );
+};

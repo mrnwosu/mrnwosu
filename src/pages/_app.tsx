@@ -10,21 +10,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-
-  
-
   return (
-    <SessionProvider session={session}>
-      <div className=" text-white">
-        {/* <SideNavBar/> */}
-        <div>
-          
-          <div className=" bg-gradient-to-b h-screen w-screen">
-              <Component {...pageProps}/>
-          </div>
+    // <SessionProvider session={session}>
+    <div className=" text-white">
+      <div>
+        <div className=" h-screen w-screen bg-gradient-to-b">
+          <Component {...pageProps} />
         </div>
       </div>
-    </SessionProvider>
+    </div>
+    // </SessionProvider>
   );
 };
 
