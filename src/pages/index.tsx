@@ -39,8 +39,8 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex h-screen w-screen flex-row bg-gradient-to-tr from-gray-600 to-claw_nueve">
         <div className="flex items-center justify-center sm:w-1/2 md:w-1/2 lg:w-1/2 ">
-          <div className=" absolute left-12 top-12 h-96 w-96 animate-blob_move rounded-full bg-orange-400 blur-2xl opacity-40  mix-blend-multiply filter"></div>
-          <div className=" absolute bottom-12 left-80 h-96 w-96 animate-blob_move rounded-full bg-claw_siete  blur-2xl opacity-70 mix-blend-multiply filter delay-1000"></div>
+          {/* <div className=" absolute left-12 top-12 h-96 w-96 animate-blob_move rounded-full bg-orange-400 blur-2xl opacity-40  mix-blend-multiply filter"></div> */}
+          <div className=" absolute bottom-12 left-80 h-96 w-96 animate-blob_move rounded-full bg-claw_siete  opacity-50 mix-blend-multiply blur-2xl filter delay-1000"></div>
           <div className=" flex flex-col items-center justify-center gap-y-4 font-bold">
             <div className=" word-container text-7xl text-claw_siete opacity-0 transition delay-300 duration-[1500ms]">
               <p>Hello!</p>
