@@ -80,7 +80,7 @@ const Home: NextPage = () => {
               </div>
         </div>
         <div className=" flex items-center justify-center md:w-full lg:w-1/2 ">
-          <div className=" grid w-screen lg:w-1/2 p-12 lg:p-0 h-auto grid-cols-3 grid-rows-4 gap-2 ">
+          <div className=" grid w-screen lg:w-1/2 p-12 lg:p-0 h-auto grid-cols-3 grid-rows-4 gap-2 rounded-xl overflow-hidden">
             {Array(12)
               .fill(0)
               .map((_, i) => {
