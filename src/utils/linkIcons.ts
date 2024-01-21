@@ -9,18 +9,18 @@ export const linkIcons: LinkProps[] = [
         href: "https://github.com/mrnwosu",
         icon: GitHub,
         description: "",
-        size: 56,
+        size: 24,
     },
     {
         href: "https://www.linkedin.com/in/ikenwosu/",
         icon: LinkedInIcon,
         description: "",
-        size: 56,
+        size: 24,
     },
     {
         href: "https://www.instagram.com/naijapsi5/",
         icon: InstagramIcon,
         description: "",
-        size: 56,
+        size: 24,
     },
 ];

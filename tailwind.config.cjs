@@ -34,6 +34,9 @@ module.exports = {
           },
         },
       },
+      fontFamily: {
+        gravitas: ["Gravitas One",  "sans-serif"],
+      },
     },
   },
   plugins: [],
