@@ -2,16 +2,19 @@ import { type NextPage } from "next";
 import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
+import * as programmerQuotes from "../utils/programmerQuotes.json";
 
 import { TopIconLink } from "../components/Icons";
 import {
   multipleElementAnimation,
-  singleElementAnimation,
 } from "../utils/uiHelpers";
 import { linkIcons } from "../utils/linkIcons";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   const loadedImageCount = useRef(0);
+  const currentQuoteIndex = useRef(7);
+  console.log("Current Quote Index", currentQuoteIndex.current);
 
   useEffect(() => {
     multipleElementAnimation(".word-container", [
@@ -27,6 +30,11 @@ const Home: NextPage = () => {
     ]);
   }, []);
 
+  const setRandomQuoteIndex = () => {
+    const randomIndex = Math.floor(Math.random() * programmerQuotes.length);
+    currentQuoteIndex.current = randomIndex;
+  };
+
   return (
     <>
       <Head>
@@ -41,7 +49,7 @@ const Home: NextPage = () => {
           <Image
             src="/dark-whatever-background.jpg"
             alt="Background Image"
-            className=" h-full w-full translate-x-56 scale-110 object-cover object-center opacity-30 mix-blend-screen transition duration-[10000ms] ease-in-out hover:translate-x-0"
+            className=" translate-x-56 scale-125 opacity-30 mix-blend-screen transition duration-[1000ms] ease-in-out hover:translate-x-0"
             fill={true}
             onLoad={() => {
               loadedImageCount.current += 1;
@@ -69,21 +77,61 @@ const Home: NextPage = () => {
             })}
           </div>
           <div className=" z-50 mr-8 mt-4 flex flex-row gap-6  text-lg">
-            <p className=" text-white/70 hover:text-white/100 transition">Blog</p>
-            <p className=" text-white/70 hover:text-white/100 transition">About this site</p>
-            <p className=" text-red-700/70 hover:text-red-700 transition">Contact Me</p>
+            <p className=" text-white/70 transition hover:text-white/100">
+              Blog
+            </p>
+            <p className=" text-white/70 transition hover:text-white/100">
+              About this site
+            </p>
+            <p className=" text-red-700/70 transition hover:text-red-700">
+              Contact Me
+            </p>
           </div>
         </nav>
-        <div className=" absolute z-10 flex h-full w-full flex-col items-center pt-36 pb-12 lg:relative lg:w-1/2 ">
-          <div className="flex flex-col gap-2">
-            <div className=" word-container tranistion flex w-4/5 flex-col text-white opacity-0 delay-500 duration-[1500ms]">
-              <div>
-                <p className=" font-gravitas text-8xl">Ike</p>
-                <p className=" font-gravitas  text-8xl">Nwosu</p>
+        <div className=" z-10 flex h-full justify-center  pt-36 pb-12 lg:relative lg:w-1/2 ">
+          <div className="ml-64 w-4/5 flex-col items-start">
+            {/* My Name / Title  */}
+            <div className="flex flex-col gap-2">
+              <div className=" word-container tranistion flex flex-col text-white">
+                <div>
+                  <p className=" font-gravitas text-8xl">Ike</p>
+                  <p className=" font-gravitas  text-8xl">Nwosu</p>
+                </div>
+                <div className=" my-1 h-1 w-72 rounded-md bg-yellow-800"></div>
+                <div>
+                  <p className=" text-2xl text-claw_siete">Software Engineer</p>
+                </div>
               </div>
-              <div className=" my-1 h-1 w-72 bg-yellow-800"></div>
-              <div>
-                <p className=" text-2xl text-claw_siete">Software Engineer</p>
+            </div>
+            {/* Quote */}
+            <div className=" mt-12 flex flex-col gap-2">
+              <div className=" w-2/3 text-white">
+                <div
+                  className=" text-white/80 transition duration-100 hover:text-white/100"
+                  onClick={() => {
+                    setRandomQuoteIndex();
+                  }}
+                >
+                  <p className=" text-2xl italic">
+                    {programmerQuotes[currentQuoteIndex.current]?.text ??
+                      "Nothing to see here"}{" "}
+                    <p>
+                      <span className=" italic">~ {" "}</span>
+                      <span className="italic underline transition duration-75 hover:text-red-700">
+                        <Link
+                          href={
+                            programmerQuotes[currentQuoteIndex.current]
+                              ?.sourceHref ?? "#"
+                          }
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          Source
+                        </Link>
+                      </span>
+                    </p>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
