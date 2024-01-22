@@ -7,6 +7,11 @@
     src: url('GravitasOne-Regular.ttf')
 }
 
+/* @font-face {
+    font-family: 'Cormorant Upright';
+    src: url('CormorantUpright-Medium.ttf')
+} */
+
 @layer base{
 
     body {

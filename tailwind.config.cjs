@@ -36,6 +36,7 @@ module.exports = {
       },
       fontFamily: {
         gravitas: ["Gravitas One",  "sans-serif"],
+        // cormorant_upright: ["Cormorant Upright",  "sans-serif"],
       },
     },
   },

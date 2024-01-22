@@ -5,35 +5,43 @@ import Image from "next/image";
 import * as programmerQuotes from "../utils/programmerQuotes.json";
 
 import { TopIconLink } from "../components/Icons";
-import {
-  multipleElementAnimation,
-} from "../utils/uiHelpers";
 import { linkIcons } from "../utils/linkIcons";
 import Link from "next/link";
+import { Quote } from "../models/quote";
+import { setAttrivuteBySelector, setTextForElementBySelector as setTextBySelector } from "../utils/uiHelpers";
 
 const Home: NextPage = () => {
   const loadedImageCount = useRef(0);
-  const currentQuoteIndex = useRef(7);
-  console.log("Current Quote Index", currentQuoteIndex.current);
+  const previousQuote = useRef<Quote | null>(null);
+  const currentQuote = useRef<Quote | null>(null);
+  const nextQuote = useRef<Quote | null>(null);
 
   useEffect(() => {
-    multipleElementAnimation(".word-container", [
-      {
-        remove: "opacity-0",
-        add: "opacity-100",
-      },
-    ]);
-
-    multipleElementAnimation(".icon-wrapper", [
-      { remove: "opacity-0", add: "opacity-100" },
-      { remove: "translate-y-4", add: "translate-y-0" },
-    ]);
+    currentQuote.current = getRandomQuote();
+    nextQuote.current = getRandomQuote();
+    refreshQuotes();
   }, []);
 
-  const setRandomQuoteIndex = () => {
-    const randomIndex = Math.floor(Math.random() * programmerQuotes.length);
-    currentQuoteIndex.current = randomIndex;
-  };
+  function getRandomQuote(): Quote {
+    const quotes = programmerQuotes;
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    return quotes[randomIndex] as Quote;
+  }
+
+  function updateQuotes() {
+    if (!previousQuote.current) {
+      currentQuote.current = previousQuote.current;
+    }
+    currentQuote.current = nextQuote.current;
+    nextQuote.current = getRandomQuote();
+    refreshQuotes();
+  }
+  
+  function refreshQuotes() {
+    setTextBySelector('.quote-box-current-text', currentQuote.current?.text ?? '');
+    setAttrivuteBySelector('.quote-box-current-source', 'href', currentQuote.current?.sourceUrl ?? '')
+  }
+
 
   return (
     <>
@@ -49,7 +57,7 @@ const Home: NextPage = () => {
           <Image
             src="/dark-whatever-background.jpg"
             alt="Background Image"
-            className=" translate-x-56 scale-125 opacity-30 mix-blend-screen transition duration-[1000ms] ease-in-out hover:translate-x-0"
+            className=" scale-125 opacity-30 mix-blend-screen"
             fill={true}
             onLoad={() => {
               loadedImageCount.current += 1;
@@ -99,7 +107,7 @@ const Home: NextPage = () => {
                 </div>
                 <div className=" my-1 h-1 w-72 rounded-md bg-yellow-800"></div>
                 <div>
-                  <p className=" text-2xl text-claw_siete">Software Engineer</p>
+                  <p className=" text-xl text-claw_siete">Software Engineer</p>
                 </div>
               </div>
             </div>
@@ -107,29 +115,24 @@ const Home: NextPage = () => {
             <div className=" mt-12 flex flex-col gap-2">
               <div className=" w-2/3 text-white">
                 <div
-                  className=" text-white/80 transition duration-100 hover:text-white/100"
+                  className="quote-box-current text-white/80 transition duration-100 hover:text-white/100"
                   onClick={() => {
-                    setRandomQuoteIndex();
+                    updateQuotes();
                   }}
                 >
-                  <p className=" text-2xl italic">
-                    {programmerQuotes[currentQuoteIndex.current]?.text ??
-                      "Nothing to see here"}{" "}
-                    <p>
-                      <span className=" italic">~ {" "}</span>
-                      <span className="italic underline transition duration-75 hover:text-red-700">
-                        <Link
-                          href={
-                            programmerQuotes[currentQuoteIndex.current]
-                              ?.sourceHref ?? "#"
-                          }
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          Source
-                        </Link>
-                      </span>
-                    </p>
+                  <p className=" quote-box-current-text text-2xl italic"></p>
+                  <p>
+                    <span className=" italic">~ </span>
+                    <span className="italic underline transition duration-75 hover:text-red-700">
+                      <Link
+                        href={"#"}
+                        className="quote-box-current-source"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        Source
+                      </Link>
+                    </span>
                   </p>
                 </div>
               </div>

@@ -23,3 +23,26 @@ export function multipleElementAnimation(
     el.classList.add(...classInfos.map((c) => c.add));
   });
 }
+
+export function setTextForElementBySelector(
+  selector: string,
+  text: string
+) {
+  const element = document.querySelector(selector);
+  if (!element) {
+    return;
+  }
+  element.textContent = text;
+}
+
+export function setAttrivuteBySelector(
+  selector: string,
+  attributeName: string,
+  attributeValue: string
+) {
+  const element = document.querySelector(selector);
+  if (!element) {
+    return;
+  }
+  element.setAttribute(attributeName, attributeValue);
+}
