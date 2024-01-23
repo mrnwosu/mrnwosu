@@ -47,17 +47,9 @@ const Home: NextPage = () => {
 
     if (imageLoadCount.current !== totalImageCount) return;
 
-    elementClassToggle(
-      ".loading-div-half-left",
-      ["-translate-x-full"],
-      null
-    );
+    elementClassToggle(".loading-div-half-left", ["-translate-x-full"], null);
 
-    elementClassToggle(
-      ".loading-div-half-right",
-      ["translate-x-full"],
-      null
-    );
+    elementClassToggle(".loading-div-half-right", ["translate-x-full"], null);
 
     elementClassToggle(".slide-in-right", null, [
       "-translate-x-24",
@@ -118,12 +110,12 @@ const Home: NextPage = () => {
       </Head>
       <main className="relative flex h-screen w-screen flex-col bg-black md:flex-col lg:flex-row">
         {/* Loading Stuff */}
-        <div className="loading-div-container flex flex-row overflow-hidden">
+        <div className=" absolute loading-div-container flex flex-row overflow-hidden h-full w-full">
           <div className=" slide-out-down absolute z-40 flex h-full w-full items-center justify-center transition duration-1500">
             <p className=" font-gravitas text-2xl text-white">Loading...</p>
           </div>
-          <div className=" loading-div-half-left absolute left-0 z-30 h-full w-1/2 bg-cyan-800 transition duration-[1500ms] ease-in-out"></div>
-          <div className=" loading-div-half-right absolute right-0 z-30 h-full w-1/2 bg-cyan-800 transition duration-[1500ms] ease-in-out"></div>
+          <div className=" left-0 top-0 loading-div-half-left absolute z-30 h-full w-1/2 bg-cyan-800 transition duration-[1500ms] ease-in-out"></div>
+          <div className=" right-0 top-0 loading-div-half-right absolute z-30 h-full w-1/2 bg-cyan-800 transition duration-[1500ms] ease-in-out"></div>
         </div>
         <div className=" absolute h-full w-full overflow-clip after:absolute after:h-full after:w-full after:bg-gradient-to-b after:from-white after:to-black after:opacity-50 after:mix-blend-multiply">
           <Image
@@ -187,6 +179,7 @@ const Home: NextPage = () => {
                 </div>
               </div>
             </div>
+            <div className=" grow"></div>
             {/* Quote */}
             <div className=" mt-12 flex flex-col gap-2">
               <div className=" w-2/3 text-white">
