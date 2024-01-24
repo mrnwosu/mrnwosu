@@ -1,52 +1,48 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: ["class"],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  prefix: "",
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
-      colors: {
-        claw_uno: "#C2AB99",
-        claw_dos: "#BC6E2C",
-        claw_tres: "#4E2E17",
-        claw_quatro: "#4E2E17",
-        claw_cinco: "#535454",
-        claw_sies: "#868074",
-        claw_siete: "#EBE0DA",
-        claw_ocho: "#F2ECE9",
-        claw_nueve: "#F5DCC6",
-        claw_diez: "#3E4454",
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
       },
       animation: {
-        blob_move: "blob_move 10s linear infinite",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
       transitionDuration: {
         0: "0ms",
         1500: "1500ms",
         2000: "2000ms",
-        3000: "3000ms",
-        4000: "4000ms",
-        5000: "5000ms",
+        10000: "10000ms",
       },
-      keyframes: {
-        blob_move: {
-          "0%, 100%": {
-            transform: "translate(0px, 0px)",
-          },
-          "25%": {
-            transform: "translate(80px, 80px)",
-          },
-          "50%": {
-            transform: "translate(0px, 100px)",
-          },
-          "75%": {
-            transform: "translate(-80px, 80px)",
-          },
-        },
-      },
-      fontFamily: {
-        gravitas: ["Gravitas One",  "sans-serif"],
-        // cormorant_upright: ["Cormorant Upright",  "sans-serif"],
-      },
+      fontFamily:
+      {
+        gravitas: ["Gravitas One", "cursive"],
+      }
+      
     },
   },
-  plugins: [],
-};
+  plugins: [require("tailwindcss-animate")],
+}
