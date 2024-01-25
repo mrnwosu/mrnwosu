@@ -147,7 +147,7 @@ const Home: NextPage = () => {
           </div>
           <div className=" inset-0 flex h-full w-full flex-col md:flex-row lg:flex-row">
             <div className=" loading-div-half-left z-30 h-1/2 w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
-            <div className=" loading-div-half-right z-30 h-1/2 w-full w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
+            <div className=" loading-div-half-right z-30 h-1/2 w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
           </div>
         </div>
         <div className=" absolute h-full w-full overflow-clip after:absolute after:h-full after:w-full after:bg-gradient-to-b after:from-white after:to-black after:opacity-50 after:mix-blend-multiply">
@@ -159,7 +159,7 @@ const Home: NextPage = () => {
             onLoad={handleImageLoaded}
           />
         </div>
-        <nav className="absolute z-20 flex w-full justify-between bg-blue-900 py-1 px-1 md:bg-transparent md:p-0 md:px-24  lg:bg-transparent lg:p-0 lg:px-24 ">
+        <nav className="absolute z-20 flex w-full justify-between bg-[#0C3049] py-1 px-4 md:bg-transparent md:p-0 md:px-24  lg:bg-transparent lg:p-0 lg:px-24 ">
           <div className=" slide-in-right flex -translate-x-24 flex-row gap-2 opacity-0 transition duration-1500 delay-1000 md:px-4 lg:mt-4 lg:px-4">
             {linkIcons.map((l, i) => {
               const delayClass = `delay-[${(i + 1) * 500}ms]`;
