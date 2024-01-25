@@ -62,6 +62,10 @@ const Home: NextPage = () => {
 
     if (imageLoadCount.current !== totalImageCount) return;
 
+    const loadingLeftElems = document.querySelectorAll('.loading-div-half-left')
+
+    if(loadingLeftElems.length === 0) return;
+
     elementClassToggle(".loading-div-half-left", ["-translate-x-full"], null);
 
     elementClassToggle(".loading-div-half-right", ["translate-x-full"], null);
@@ -130,7 +134,7 @@ const Home: NextPage = () => {
       <main className="relative flex h-screen w-screen flex-col bg-black md:flex-col lg:flex-row">
         {/* Loading Stuff */}
         <div className=" loading-div-container absolute flex h-full w-full flex-row overflow-hidden">
-          <div className=" slide-out-down absolute z-40 flex h-full w-full items-center justify-center font-gravitas text-2xl transition duration-1500">
+          <div className=" loading-div-half-left md:slide-out-down lg:slide-out-down absolute z-40 flex h-full w-full items-center justify-center font-gravitas text-2xl transition duration-1500">
             <Image
               className=" absolute z-40 animate-spin duration-10000"
               src="/loading-circle.png"
@@ -141,8 +145,10 @@ const Home: NextPage = () => {
             />
             <p className=" loading-text font-gravitas text-2xl text-white"></p>
           </div>
-          <div className=" loading-div-half-left absolute left-0 top-0 z-30 h-full w-1/2 bg-cyan-800 transition duration-1500 ease-in-out"></div>
-          <div className=" loading-div-half-right absolute right-0 top-0 z-30 h-full w-1/2 bg-cyan-800 transition duration-1500 ease-in-out"></div>
+          <div className=" inset-0 flex h-full w-full flex-col md:flex-row lg:flex-row">
+            <div className=" loading-div-half-left z-30 h-1/2 w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
+            <div className=" loading-div-half-right z-30 h-1/2 w-full w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
+          </div>
         </div>
         <div className=" absolute h-full w-full overflow-clip after:absolute after:h-full after:w-full after:bg-gradient-to-b after:from-white after:to-black after:opacity-50 after:mix-blend-multiply">
           <Image
@@ -153,13 +159,13 @@ const Home: NextPage = () => {
             onLoad={handleImageLoaded}
           />
         </div>
-        <nav className="absolute z-20 flex w-full  justify-between px-24 ">
-          <div className=" slide-in-right flex -translate-x-24  flex-row  gap-1 px-4 opacity-0 transition duration-1500 delay-1000">
+        <nav className="absolute z-20 flex w-full justify-between bg-blue-900 py-1 px-1 md:bg-transparent md:p-0 md:px-24  lg:bg-transparent lg:p-0 lg:px-24 ">
+          <div className=" slide-in-right flex -translate-x-24 flex-row gap-2 opacity-0 transition duration-1500 delay-1000 md:px-4 lg:mt-4 lg:px-4">
             {linkIcons.map((l, i) => {
               const delayClass = `delay-[${(i + 1) * 500}ms]`;
               return (
                 <div
-                  className={` icon-wrapper translate-y-4 transition ${delayClass} duration-1500 ease-out `}
+                  className={` icon-wrapper transition ${delayClass} duration-1500 ease-out `}
                   key={`${i}-${l.description}`}
                 >
                   <TopIconLink
@@ -173,7 +179,7 @@ const Home: NextPage = () => {
               );
             })}
           </div>
-          <div className=" slide-in-left z-30 mr-8 mt-4 flex translate-x-24 flex-row gap-6 text-lg opacity-0 transition duration-1500  delay-1000">
+          <div className=" slide-in-left z-30 flex translate-x-24 flex-row gap-6 text-lg opacity-0 transition duration-1500 delay-1000 md:mr-8 md:mt-4 lg:mr-8  lg:mt-4">
             <p className=" text-white/70 transition hover:text-white/100">
               Blog
             </p>
@@ -185,38 +191,37 @@ const Home: NextPage = () => {
             </p>
           </div>
         </nav>
-        <div className=" z-10 flex h-full justify-center  pt-36 pb-12 lg:relative lg:w-1/2 ">
-          <div className="ml-64 h-full w-4/5 flex-col items-start">
+        <div className=" z-10 flex h-full justify-center pt-20 md:pt-36 lg:pt-36 pb-12 lg:relative lg:w-1/2 ">
+          <div className="h-full w-4/5 flex-col items-start text-center md:ml-64 md:text-left lg:ml-64 lg:text-left">
             {/* My Name / Title  */}
             <div className="flex flex-col gap-2">
               <div className=" word-container tranistion flex flex-col text-white">
                 <div>
-                  <p className=" slide-in-right -translate-x-24 font-gravitas text-8xl opacity-0 transition duration-1500">
+                  <p className=" slide-in-right -translate-x-24 font-gravitas text-6xl opacity-0 transition duration-1500 md:text-8xl lg:text-8xl">
                     Ike
                   </p>
-                  <p className=" slide-in-right -translate-x-24 font-gravitas text-8xl opacity-0 transition duration-1500">
+                  <p className=" slide-in-right -translate-x-24 font-gravitas  text-6xl opacity-0 transition duration-1500 md:text-8xl lg:text-8xl">
                     Nwosu
                   </p>
                 </div>
-                <div className=" slide-in-right my-1 h-1 w-72 -translate-x-24 rounded-md bg-yellow-800 opacity-0 transition duration-1500 delay-200"></div>
+                <div className=" slide-in-right my-1 h-1 -translate-x-24 rounded-md bg-yellow-800 opacity-0 transition duration-1500 delay-200 md:w-72 lg:w-72"></div>
                 <div>
-                  <p className=" slide-in-right text-claw_siete -translate-x-24 text-xl opacity-0 transition duration-1500 delay-200">
+                  <p className=" slide-in-right text-claw_siete -translate-x-24 text:lg md:text-xl lg:text-xl opacity-0 transition duration-1500 delay-200">
                     Software Engineer
                   </p>
                 </div>
               </div>
             </div>
-            <div className=" grow"></div>
             {/* Quote */}
-            <div className=" mt-12 flex flex-col gap-2">
-              <div className=" w-2/3 text-white">
+            <div className=" relative flex flex-col gap-2 h-full ">
+              <div className=" mt-[30rem] lg:mt-28 text-white md:w-2/3 lg:w-2/3">
                 <div
                   className="quote-box-current slide-in-right -translate-x-24  text-white/80 opacity-0 transition duration-1500 delay-500 hover:text-white/100"
                   onClick={() => {
                     updateQuotes();
                   }}
                 >
-                  <p className=" quote-box-current-text text-2xl italic"></p>
+                  <p className=" quote-box-current-text text-center text-2xl italic md:text-left lg:text-left"></p>
                   <p>
                     <span className=" italic">~ </span>
                     <span className="italic underline transition duration-75 hover:text-red-700">
@@ -235,9 +240,9 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        <div className=" relative flex items-center justify-center md:w-full lg:w-1/2 ">
+        <div className=" absolute flex h-full w-full items-center justify-center md:relative lg:relative lg:w-1/2 ">
           <div className=" blob slide-in-left absolute h-64 w-64 translate-x-24 scale-125 rounded-full bg-[#0B548F] opacity-0 blur-3xl transition duration-1500 lg:top-36 lg:left-72"></div>
-          <div className=" slide-in-left relative aspect-[2/3] h-5/6 translate-x-24 gap-2 overflow-hidden rounded-xl p-12  opacity-0  transition-all duration-1500">
+          <div className=" slide-in-left relative aspect-[2/3] h-2/3 md:h-5/6 lg:h-5/6 translate-x-24 gap-2 overflow-hidden rounded-xl p-12 mt-40 md:mt-0 lg:mt-0 opacity-0  transition-all duration-1500">
             <Image
               src="/IkeBday-5-transparent.png"
               alt="Picture of the author"

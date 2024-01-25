@@ -1,7 +1,5 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
-import { TopIconLink } from "../components/Icons";
 import { Analytics } from '@vercel/analytics/react'
 
 import { api } from "../utils/api";
@@ -14,7 +12,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   <>
     <Analytics/>
     {/* // <SessionProvider session={session}> */}
-    <div className=" text-white">
+    <div className=" text-white overflow-clip">
       <div>
         <div className=" h-screen w-screen bg-gradient-to-b">
           <Component {...pageProps} />
