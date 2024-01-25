@@ -3,19 +3,19 @@ import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import * as programmerQuotes from "../utils/programmerQuotes.json";
-
 import { TopIconLink } from "../components/Icons";
 import { linkIcons } from "../utils/linkIcons";
 import Link from "next/link";
-import { Quote } from "../models/quote";
+import type { Quote } from "../models/quote";
+
 import {
   elementClassToggle,
   setAttrivuteBySelector,
   setTextForElementBySelector as setTextBySelector,
 } from "../utils/uiHelpers";
+import { isMobile } from "react-device-detect";
 
 const Home: NextPage = () => {
-  const loadedImageCount = useRef(0);
   const previousQuote = useRef<Quote | null>(null);
   const currentQuote = useRef<Quote | null>(null);
   const imageLoadCount = useRef<number>(0);
@@ -62,13 +62,29 @@ const Home: NextPage = () => {
 
     if (imageLoadCount.current !== totalImageCount) return;
 
-    const loadingLeftElems = document.querySelectorAll('.loading-div-half-left')
+    const loadingLeftElems = document.querySelectorAll(
+      ".loading-div-half-left"
+    );
 
-    if(loadingLeftElems.length === 0) return;
+    if (loadingLeftElems.length === 0) return;
 
     elementClassToggle(".loading-div-half-left", ["-translate-x-full"], null);
 
     elementClassToggle(".loading-div-half-right", ["translate-x-full"], null);
+
+    if (isMobile) {
+      elementClassToggle(".rotating-loading-image", [
+        "-translate-x-full",
+        "opacity-0",
+        "scale-0",
+      ], null);
+    } else {
+      elementClassToggle(".rotating-loading-image", [
+        "translate-y-full",
+        "opacity-0",
+        "scale-0",
+      ], null);
+    }
 
     elementClassToggle(".slide-in-right", null, [
       "-translate-x-24",
@@ -81,12 +97,6 @@ const Home: NextPage = () => {
       "opacity-0",
       "duration-1000",
     ]);
-
-    elementClassToggle(
-      ".slide-out-down",
-      ["translate-y-full", "opacity-0", "scale-0"],
-      null
-    );
 
     elementClassToggle(".blob", ["opacity-50"], null);
 
@@ -134,7 +144,7 @@ const Home: NextPage = () => {
       <main className="relative flex h-screen w-screen flex-col bg-black md:flex-col lg:flex-row">
         {/* Loading Stuff */}
         <div className=" loading-div-container absolute flex h-full w-full flex-row overflow-hidden">
-          <div className=" loading-div-half-left md:slide-out-down lg:slide-out-down absolute z-40 flex h-full w-full items-center justify-center font-gravitas text-2xl transition duration-1500">
+          <div className=" rotating-loading-image absolute z-40 flex h-full w-full items-center justify-center font-gravitas text-2xl transition duration-1500">
             <Image
               className=" absolute z-40 animate-spin duration-10000"
               src="/loading-circle.png"
@@ -191,7 +201,7 @@ const Home: NextPage = () => {
             </p>
           </div>
         </nav>
-        <div className=" z-10 flex h-full justify-center pt-20 md:pt-36 lg:pt-36 pb-12 lg:relative lg:w-1/2 ">
+        <div className=" z-10 flex h-full justify-center pt-20 pb-12 md:pt-36 lg:relative lg:w-1/2 lg:pt-36 ">
           <div className="h-full w-4/5 flex-col items-start text-center md:ml-64 md:text-left lg:ml-64 lg:text-left">
             {/* My Name / Title  */}
             <div className="flex flex-col gap-2">
@@ -206,15 +216,15 @@ const Home: NextPage = () => {
                 </div>
                 <div className=" slide-in-right my-1 h-1 -translate-x-24 rounded-md bg-yellow-800 opacity-0 transition duration-1500 delay-200 md:w-72 lg:w-72"></div>
                 <div>
-                  <p className=" slide-in-right text-claw_siete -translate-x-24 text:lg md:text-xl lg:text-xl opacity-0 transition duration-1500 delay-200">
+                  <p className=" slide-in-right text-claw_siete text:lg -translate-x-24 opacity-0 transition duration-1500 delay-200 md:text-xl lg:text-xl">
                     Software Engineer
                   </p>
                 </div>
               </div>
             </div>
             {/* Quote */}
-            <div className=" relative flex flex-col gap-2 h-full ">
-              <div className=" mt-[30rem] lg:mt-28 text-white md:w-2/3 lg:w-2/3">
+            <div className=" relative flex h-full flex-col gap-2 ">
+              <div className=" mt-[30rem] text-white md:w-2/3 lg:mt-28 lg:w-2/3">
                 <div
                   className="quote-box-current slide-in-right -translate-x-24  text-white/80 opacity-0 transition duration-1500 delay-500 hover:text-white/100"
                   onClick={() => {
@@ -242,7 +252,7 @@ const Home: NextPage = () => {
         </div>
         <div className=" absolute flex h-full w-full items-center justify-center md:relative lg:relative lg:w-1/2 ">
           <div className=" blob slide-in-left absolute h-64 w-64 translate-x-24 scale-125 rounded-full bg-[#0B548F] opacity-0 blur-3xl transition duration-1500 lg:top-36 lg:left-72"></div>
-          <div className=" slide-in-left relative aspect-[2/3] h-2/3 md:h-5/6 lg:h-5/6 translate-x-24 gap-2 overflow-hidden rounded-xl p-12 mt-40 md:mt-0 lg:mt-0 opacity-0  transition-all duration-1500">
+          <div className=" slide-in-left relative mt-40 aspect-[2/3] h-2/3 translate-x-24 gap-2 overflow-hidden rounded-xl p-12 opacity-0 transition-all duration-1500 md:mt-0 md:h-5/6  lg:mt-0 lg:h-5/6">
             <Image
               src="/IkeBday-5-transparent.png"
               alt="Picture of the author"

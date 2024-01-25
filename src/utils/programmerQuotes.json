@@ -228,10 +228,6 @@
     "sourceUrl": "https://www.reddit.com/r/ProgrammerHumor/comments/5xgce0/if_java_had_true_garbage_collection/"
   },
   {
-    "text": "“JavaScript logic: 0 == \"0\" and 0 == []; therefore, \"0\" != [].",
-    "sourceUrl": "https://www.quora.com/What-are-some-good-JavaScript-jokes/answer/Umang-Malhotra-3"
-  },
-  {
     "text": "“Python: Executable pseudocode. Perl: Executable line noise.”",
     "sourceUrl": "https://quotefancy.com/quote/1767843/Bruce-Eckel-Python-is-executable-pseudocode-Perl-is-executable-line-noise"
   },
@@ -264,10 +260,6 @@
     "sourceUrl": "https://medium.com/@leog7one/to-understand-recursion-you-must-first-understand-recursion-recursion-explained-c574245cf788"
   },
   {
-    "text": "“Russian roulette: [ $[ $RANDOM % 6 ] == 0 ] && rm -rf / || echo *Click*”",
-    "sourceUrl": "https://www.cyberciti.biz/link/lmao-command-line-russian-roulette-for-linux-and-unix-users/"
-  },
-  {
     "text": "“The best thing about a boolean is even if you are wrong, you are only off by a bit.”",
     "sourceUrl": "https://www.reddit.com/r/ProgrammerHumor/comments/6erd7r/the_best_thing_about_a_boolean_is_that_even_if/"
   },
@@ -282,10 +274,6 @@
   {
     "text": "“William Shakespeare’s question 2B OR NOT 2B = FF.",
     "sourceUrl": "https://recycledalien.wordpress.com/2011/12/02/2b-or-not-2b-ff-the-answer/"
-  },
-  {
-    "text": "“Q: If 1 is true and 0 is false? A: 1.”",
-    "sourceUrl": "https://twitter.com/elye_project/status/1314751623479001089"
   },
   {
     "text": "“Programmer’s partner: ‘Are you going to sit and type in front of that thing all day, or are you going out with me?’ Programmer: ‘Yes.’”",
