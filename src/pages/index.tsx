@@ -2,11 +2,11 @@ import { type NextPage } from "next";
 import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import * as programmerQuotes from "../utils/programmerQuotes.json";
-import { TopIconLink } from "../components/Icons";
-import { linkIcons } from "../utils/linkIcons";
+import * as programmerQuotes from "@utils/programmerQuotes.json";
 import Link from "next/link";
-import type { Quote } from "../models/quote";
+import { TopIconLink } from "@components/Icons";
+import { linkIcons } from "@utils/linkIcons";
+import type { Quote } from "@models/quote";
 
 import {
   elementClassToggle,
@@ -14,6 +14,7 @@ import {
   setTextForElementBySelector as setTextBySelector,
 } from "../utils/uiHelpers";
 import { isMobile } from "react-device-detect";
+import { Button } from "@/components/ui/button";
 
 const Home: NextPage = () => {
   const previousQuote = useRef<Quote | null>(null);
@@ -189,16 +190,9 @@ const Home: NextPage = () => {
               );
             })}
           </div>
-          <div className=" slide-in-left z-30 flex translate-x-24 flex-row gap-6 text-lg opacity-0 transition duration-1500 delay-1000 md:mr-8 md:mt-4 lg:mr-8  lg:mt-4">
-            <p className=" text-white/70 transition hover:text-white/100">
-              Blog
-            </p>
-            <p className=" text-white/70 transition hover:text-white/100">
-              About this site
-            </p>
-            <p className=" text-red-700/70 transition hover:text-red-700">
-              Contact Me
-            </p>
+          <div className=" slide-in-left z-30 flex translate-x-24 flex-row gap-6 text-lg opacity-0 transition duration-1500 delay-1000 md:mr-8 md:mt-4 lg:mr-8 md:gap-2 lg:gap-2  lg:mt-4">
+            <Button className=" text-lg" variant={"ghost"} size={"skinny"}>Blog</Button>
+            <Button className=" text-lg text-red-700 hover:text-red-500" variant={"ghost"} size={"skinny"}>About this site</Button>
           </div>
         </nav>
         <div className=" z-10 flex h-full justify-center pt-20 pb-12 md:pt-36 lg:relative lg:w-1/2 lg:pt-36 ">
