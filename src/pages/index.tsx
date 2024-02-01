@@ -184,18 +184,30 @@ const Home: NextPage = () => {
           />
         </div>
         <nav className="absolute z-20 flex w-full justify-between bg-[#0C3049] py-1 px-4 md:bg-transparent md:p-0 md:px-24  lg:bg-transparent lg:p-0 lg:px-24 ">
-          <div className=" slide-in-right flex -translate-x-24 flex-row gap-2 opacity-0 transitionduration-1500 delay-1000 md:px-4 lg:mt-4 lg:px-4 ">
-            <a href="https://www.linkedin.com/in/ikenwosu" target="_blank" rel="noreferrer">
+          <div className=" slide-in-right transitionduration-1500 flex -translate-x-24 flex-row gap-2 opacity-0 delay-1000 md:px-4 lg:mt-4 lg:px-4 ">
+            <a
+              href="https://www.linkedin.com/in/ikenwosu"
+              target="_blank"
+              rel="noreferrer"
+            >
               <NavButton variant={"ghost"} size="icon">
                 <LinkedInLogoIcon />
               </NavButton>
             </a>
-            <a href="https://github.com/mrnwosu" target="_blank" rel="noreferrer">
+            <a
+              href="https://github.com/mrnwosu"
+              target="_blank"
+              rel="noreferrer"
+            >
               <NavButton variant={"ghost"} size="icon">
                 <GitHubLogoIcon />
               </NavButton>
             </a>
-            <a href="https://www.instagram.com/naijapsi5" target="_blank" rel="noreferrer">
+            <a
+              href="https://www.instagram.com/naijapsi5"
+              target="_blank"
+              rel="noreferrer"
+            >
               <NavButton variant={"ghost"} size="icon">
                 <InstagramLogoIcon />
               </NavButton>
@@ -216,16 +228,26 @@ const Home: NextPage = () => {
                 </NavButton>
               </SheetTrigger>
               <SheetContent
-                className=" border-l-4 border-l-slate-500  bg-black/70 text-white"
+                className=" border-l-4 border-l-slate-500  bg-black/80 text-white"
                 side="right"
               >
                 <SheetHeader>
                   <SheetTitle className=" text-xl">Contact Me</SheetTitle>
                   <SheetDescription>
-                    Feel free to reach out to me at any time.!
+                    Feel free to drop me a message anytime if you have
+                    questions, need advice, or just want to chat. I'm here to
+                    help and always open to interesting conversations.
                   </SheetDescription>
                 </SheetHeader>
-                <ContactMeForm />
+                <div className=" relative h-6"></div>
+                <div className=" relative">
+                  <div className=" absolute w-full">
+                    
+                  </div>
+                  <div className=" absolute w-full">
+                    <ContactMeForm />
+                  </div>
+                </div>
                 <SheetFooter>
                   {/* Add the submit button here */}
                   {/* <Button
