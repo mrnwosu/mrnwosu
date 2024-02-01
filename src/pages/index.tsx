@@ -4,9 +4,11 @@ import Head from "next/head";
 import Image from "next/image";
 import * as programmerQuotes from "@utils/programmerQuotes.json";
 import Link from "next/link";
-import { TopIconLink } from "@components/Icons";
-import { linkIcons } from "@utils/linkIcons";
-import type { Quote } from "@models/quote";
+import {
+  InstagramLogoIcon,
+  GitHubLogoIcon,
+  LinkedInLogoIcon,
+} from "@radix-ui/react-icons";
 
 import {
   elementClassToggle,
@@ -14,7 +16,18 @@ import {
   setTextForElementBySelector as setTextBySelector,
 } from "../utils/uiHelpers";
 import { isMobile } from "react-device-detect";
-import { Button } from "@/components/ui/button";
+import { NavButton } from "@/components/ui/navButton";
+import type { Quote } from "@models/quote";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@mui/material";
 
 const Home: NextPage = () => {
   const previousQuote = useRef<Quote | null>(null);
@@ -74,17 +87,17 @@ const Home: NextPage = () => {
     elementClassToggle(".loading-div-half-right", ["translate-x-full"], null);
 
     if (isMobile) {
-      elementClassToggle(".rotating-loading-image", [
-        "-translate-x-full",
-        "opacity-0",
-        "scale-0",
-      ], null);
+      elementClassToggle(
+        ".rotating-loading-image",
+        ["-translate-x-full", "opacity-0", "scale-0"],
+        null
+      );
     } else {
-      elementClassToggle(".rotating-loading-image", [
-        "translate-y-full",
-        "opacity-0",
-        "scale-0",
-      ], null);
+      elementClassToggle(
+        ".rotating-loading-image",
+        ["translate-y-full", "opacity-0", "scale-0"],
+        null
+      );
     }
 
     elementClassToggle(".slide-in-right", null, [
@@ -172,27 +185,68 @@ const Home: NextPage = () => {
         </div>
         <nav className="absolute z-20 flex w-full justify-between bg-[#0C3049] py-1 px-4 md:bg-transparent md:p-0 md:px-24  lg:bg-transparent lg:p-0 lg:px-24 ">
           <div className=" slide-in-right flex -translate-x-24 flex-row gap-2 opacity-0 transition duration-1500 delay-1000 md:px-4 lg:mt-4 lg:px-4">
-            {linkIcons.map((l, i) => {
-              const delayClass = `delay-[${(i + 1) * 500}ms]`;
-              return (
-                <div
-                  className={` icon-wrapper transition ${delayClass} duration-1500 ease-out `}
-                  key={`${i}-${l.description}`}
-                >
-                  <TopIconLink
-                    key={i}
-                    href={l.href}
-                    icon={l.icon}
-                    description={l.description}
-                    size={l.size}
-                  />
-                </div>
-              );
-            })}
+            <NavButton variant={"ghost"} size="icon">
+              <LinkedInLogoIcon />
+            </NavButton>
+            <NavButton variant={"ghost"} size="icon">
+              <GitHubLogoIcon />
+            </NavButton>
+            <NavButton variant={"ghost"} size="icon">
+              <InstagramLogoIcon />
+            </NavButton>
           </div>
-          <div className=" slide-in-left z-30 flex translate-x-24 flex-row gap-6 text-lg opacity-0 transition duration-1500 delay-1000 md:mr-8 md:mt-4 lg:mr-8 md:gap-2 lg:gap-2  lg:mt-4">
-            <Button className=" text-lg" variant={"ghost"} size={"skinny"}>Blog</Button>
-            <Button className=" text-lg text-red-700 hover:text-red-500" variant={"ghost"} size={"skinny"}>About this site</Button>
+          <div className=" slide-in-left z-30 flex translate-x-24 flex-row gap-6 text-lg opacity-0 transition duration-1500 delay-1000 md:mr-8 md:mt-4 md:gap-2 lg:mr-8 lg:mt-4  lg:gap-2">
+            <NavButton className=" text-lg" variant={"ghost"} size={"skinny"}>
+              Blog
+            </NavButton>
+            <Sheet>
+              <SheetTrigger asChild={true}>
+                <NavButton
+                  className=" text-lg text-red-700 hover:text-red-500"
+                  variant={"ghost"}
+                  size={"skinny"}
+                >
+                  Contact Me
+                </NavButton>
+              </SheetTrigger>
+              <SheetContent
+                className=" border-l-4 border-l-slate-500  bg-black/70 text-white"
+                side="right"
+              >
+                <SheetHeader>
+                  <SheetTitle className=" text-xl">Contact Me</SheetTitle>
+                  <SheetDescription>
+                    Feel free to reach out to me at any time.!
+                  </SheetDescription>
+                </SheetHeader>
+                {/* Create a quick form that access Name, email message */}
+                <div className=" flex flex-col gap-2 p-4">
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    className=" rounded-md border-2 border-slate-500 p-2"
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className=" rounded-md border-2 border-slate-500 p-2"
+                  />
+                  <textarea
+                    placeholder="Message"
+                    className=" rounded-md border-2 border-slate-500 p-2"
+                  ></textarea>
+                </div>
+                <SheetFooter>
+                  {/* Add the submit button here */}
+                  <Button
+                    className=" bg-red-700 text-white hover:bg-red-500"
+                    variant="contained"
+                  >
+                    Submit
+                  </Button>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
           </div>
         </nav>
         <div className=" z-10 flex h-full justify-center pt-20 pb-12 md:pt-36 lg:relative lg:w-1/2 lg:pt-36 ">
