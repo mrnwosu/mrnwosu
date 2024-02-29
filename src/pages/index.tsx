@@ -28,6 +28,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ContactMeForm } from "@components/contactMeForm";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const Home: NextPage = () => {
   const previousQuote = useRef<Quote | null>(null);
@@ -37,6 +38,7 @@ const Home: NextPage = () => {
   const loadingText = useRef<string>("Loading");
   const loadingTextInterval = useRef<NodeJS.Timer | null>(null);
   const isFirstLoad = useRef<boolean>(true);
+  const isContactMeFormSubmitted = useRef<boolean>(false);
 
   const eventualClasses = [
     "-translate-x-full",
@@ -146,6 +148,33 @@ const Home: NextPage = () => {
     );
   }
 
+  function handleFormSubmit() {
+    isContactMeFormSubmitted.current = true;
+    if (isContactMeFormSubmitted.current) {
+      elementClassToggle(
+        ".sheet-form-container",
+        ["opacity-0"],
+        ["opacity-100"]
+      );
+      elementClassToggle(
+        ".sheet-form-completed-container",
+        ["opacity-100"],
+        ["opacity-0"]
+      );
+    } else {
+      elementClassToggle(
+        ".sheet-form-container",
+        ["opacity-100"],
+        ["opacity-0"]
+      );
+      elementClassToggle(
+        ".sheet-form-completed-container",
+        ["opacity-0"],
+        ["opacity-100"]
+      );
+    }
+  }
+
   return (
     <>
       <Head>
@@ -235,18 +264,22 @@ const Home: NextPage = () => {
                   <SheetTitle className=" text-xl">Contact Me</SheetTitle>
                   <SheetDescription>
                     Feel free to drop me a message anytime if you have
-                    questions, need advice, or just want to chat. I'm here to
-                    help and always open to interesting conversations.
+                    questions, need advice, or just want to chat. I&apos;m here
+                    to help and always open to interesting conversations.
                   </SheetDescription>
                 </SheetHeader>
                 <div className=" relative h-6"></div>
                 <div className=" relative">
-                  <div className=" absolute w-full">
-                    
-                  </div>
-                  <div className=" absolute w-full">
-                    <ContactMeForm />
-                  </div>
+                  {isContactMeFormSubmitted.current && (
+                    <div className=" sheet-form-completed-container absolute w-full opacity-0 transition">
+                      It's all done
+                    </div>
+                  )}
+                  {!isContactMeFormSubmitted.current && (
+                    <div className=" sheet-form-container absolute w-full transition">
+                      <ContactMeForm submiteHandler={handleFormSubmit} />
+                    </div>
+                  )}
                 </div>
                 <SheetFooter>
                   {/* Add the submit button here */}

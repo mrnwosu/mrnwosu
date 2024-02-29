@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,7 +20,11 @@ export const contactMeformScheuma = z.object({
   message: z.string().min(3).max(255),
 });
 
-export function ContactMeForm() {
+export function ContactMeForm({
+  submiteHandler,
+}: {
+  submiteHandler: () => void;
+}) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof contactMeformScheuma>>({
     resolver: zodResolver(contactMeformScheuma),
@@ -28,6 +40,7 @@ export function ContactMeForm() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    submiteHandler();
   }
 
   return (
@@ -43,9 +56,7 @@ export function ContactMeForm() {
               <FormControl>
                 <Input placeholder="Mike Jones" {...field} />
               </FormControl>
-              <FormDescription>
-                Your name.
-              </FormDescription>
+              <FormDescription>Your name.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -59,9 +70,7 @@ export function ContactMeForm() {
               <FormControl>
                 <Input placeholder="whois@mikejoines.com" {...field} />
               </FormControl>
-              <FormDescription>
-                Your email address.
-              </FormDescription>
+              <FormDescription>Your email address.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -71,13 +80,14 @@ export function ContactMeForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Message</FormLabel>
               <FormControl>
-                <Textarea placeholder="I'd like to reach out to..." {...field} />
+                <Textarea
+                  placeholder="I'd like to reach out to..."
+                  {...field}
+                />
               </FormControl>
-              <FormDescription>
-                Whatever you&apos;d like!
-              </FormDescription>
+              <FormDescription>Whatever you&apos;d like!</FormDescription>
               <FormMessage />
             </FormItem>
           )}
