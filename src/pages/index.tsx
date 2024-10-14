@@ -153,13 +153,13 @@ const Home: NextPage = () => {
     if (isContactMeFormSubmitted.current) {
       elementClassToggle(
         ".sheet-form-container",
-        ["opacity-0"],
-        ["opacity-100"]
+        ["opacity-100"],
+        ["opacity-0"]
       );
       elementClassToggle(
         ".sheet-form-completed-container",
-        ["opacity-100"],
-        ["opacity-0"]
+        ["opacity-0"],
+        ["opacity-100"]
       );
     } else {
       elementClassToggle(
@@ -272,7 +272,7 @@ const Home: NextPage = () => {
                 <div className=" relative">
                   {isContactMeFormSubmitted.current && (
                     <div className=" sheet-form-completed-container absolute w-full opacity-0 transition">
-                      It's all done
+                      It&apos;s all done
                     </div>
                   )}
                   {!isContactMeFormSubmitted.current && (
