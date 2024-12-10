@@ -28,7 +28,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ContactMeForm } from "@components/contactMeForm";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const Home: NextPage = () => {
   const previousQuote = useRef<Quote | null>(null);
