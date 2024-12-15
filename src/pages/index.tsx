@@ -28,8 +28,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ContactMeForm } from "@components/contactMeForm";
-import type { Observable} from "rxjs";
+import type { Observable } from "rxjs";
 import { interval, takeWhile } from "rxjs";
+import { animate } from "motion";
 
 const Home: NextPage = () => {
   const previousQuote = useRef<Quote | null>(null);
@@ -89,9 +90,15 @@ const Home: NextPage = () => {
 
     if (loadingLeftElems.length === 0) return;
 
-    elementClassToggle(".loading-div-half-left", ["-translate-x-full"], null);
 
-    elementClassToggle(".loading-div-half-right", ["translate-x-full"], null);
+    animate(".loading-div-half-left", {
+      x: "-100%",
+    });
+
+    animate(".loading-div-half-right", {
+      x: "100%",
+    });
+
 
     if (isMobile) {
       elementClassToggle(
