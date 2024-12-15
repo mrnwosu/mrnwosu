@@ -212,7 +212,7 @@ const Home: NextPage = () => {
           />
         </div>
         <nav className="absolute z-20 flex w-full justify-between bg-[#0C3049] py-1 px-4 md:bg-transparent md:p-0 md:px-24  lg:bg-transparent lg:p-0 lg:px-24 ">
-          <div className=" slide-in-right transition duration-1500 flex -translate-x-24 flex-row gap-2 opacity-0 delay-1000 md:px-4 lg:mt-4 lg:px-4 ">
+          <div className=" slide-in-right flex -translate-x-24 flex-row gap-2 opacity-0 transition duration-1500 delay-1000 md:px-4 lg:mt-4 lg:px-4 ">
             <a
               href="https://www.linkedin.com/in/ikenwosu"
               target="_blank"
