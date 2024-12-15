@@ -28,6 +28,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ContactMeForm } from "@components/contactMeForm";
+import type { Observable} from "rxjs";
+import { interval, takeWhile } from "rxjs";
 
 const Home: NextPage = () => {
   const previousQuote = useRef<Quote | null>(null);
@@ -35,8 +37,9 @@ const Home: NextPage = () => {
   const imageLoadCount = useRef<number>(0);
   const nextQuote = useRef<Quote | null>(null);
   const loadingText = useRef<string>("Loading");
-  const loadingTextInterval = useRef<NodeJS.Timer | null>(null);
+  const loadingTextInterval = useRef<Observable<number> | null>(null);
   const isFirstLoad = useRef<boolean>(true);
+  const isLoaded = useRef<boolean>(false);
   const isContactMeFormSubmitted = useRef<boolean>(false);
 
   const eventualClasses = [
@@ -57,14 +60,17 @@ const Home: NextPage = () => {
 
     if (isFirstLoad.current) {
       isFirstLoad.current = false;
-      loadingTextInterval.current = setInterval(() => {
-        if (loadingText.current.length > 9) {
-          loadingText.current = "Loading";
-        } else {
-          loadingText.current += ".";
-        }
-        setTextBySelector(".loading-text", loadingText.current);
-      }, 500);
+      loadingTextInterval.current = interval(500);
+      loadingTextInterval.current
+        .pipe(takeWhile(() => !isLoaded.current))
+        .subscribe(() => {
+          if (loadingText.current.length > 9) {
+            loadingText.current = "Loading";
+          } else {
+            loadingText.current += ".";
+          }
+          setTextBySelector(".loading-text", loadingText.current);
+        });
     }
   }, []);
 
@@ -114,10 +120,7 @@ const Home: NextPage = () => {
     ]);
 
     elementClassToggle(".blob", ["opacity-50"], null);
-
-    if (loadingTextInterval.current) {
-      clearInterval(loadingTextInterval.current);
-    }
+    isLoaded.current = true;
   }
 
   function getRandomQuote(): Quote {
@@ -316,7 +319,7 @@ const Home: NextPage = () => {
             </div>
             {/* Quote */}
             <div className=" relative flex h-full flex-col gap-2 ">
-              <div className=" mt-[30rem] text-white md:w-2/3 lg:mt-28 lg:w-2/3">
+              <div className=" text-white md:mt-[8rem] md:w-2/3 lg:mt-28 lg:w-2/3">
                 <div
                   className="quote-box-current slide-in-right -translate-x-24  text-white/80 opacity-0 transition duration-1500 delay-500 hover:text-white/100"
                   onClick={() => {
