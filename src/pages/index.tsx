@@ -17,22 +17,10 @@ const Home: NextPage = () => {
   const currentQuote = useRef<Quote | null>(null);
   const nextQuote = useRef<Quote | null>(null);
   
-  const eventualClasses = [
-    "-translate-x-full",
-    "translate-x-full",
-    "translate-x-24",
-    "-translate-x-24",
-    "opacity-50",
-    "opacity-0",
-    "translate-y-full",
-    "scale-0",
-  ];
-
   useEffect(() => {
     currentQuote.current = getRandomQuote();
     nextQuote.current = getRandomQuote();
     refreshQuotes();
-
   }, []);
 
   function getRandomQuote(): Quote {
@@ -61,8 +49,6 @@ const Home: NextPage = () => {
       currentQuote.current?.sourceUrl ?? ""
     );
   }
-
-  
 
   return (
     <>
