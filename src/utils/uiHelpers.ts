@@ -22,11 +22,13 @@ export function setTextForElementBySelector(
   selector: string,
   text: string
 ) {
-  const element = document.querySelector(selector);
-  if (!element) {
+  const elements = document.querySelectorAll(selector);
+  if (!elements) {
     return;
   }
-  element.textContent = text;
+  elements.forEach((element) => {
+    element.textContent = text;
+  });
 }
 
 export function setAttrivuteBySelector(
@@ -34,9 +36,11 @@ export function setAttrivuteBySelector(
   attributeName: string,
   attributeValue: string
 ) {
-  const element = document.querySelector(selector);
-  if (!element) {
+  const elements = document.querySelectorAll(selector);
+  if (!elements) {
     return;
   }
-  element.setAttribute(attributeName, attributeValue);
+  elements.forEach((element) => {
+    element.setAttribute(attributeName, attributeValue);
+  });
 }

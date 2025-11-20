@@ -60,7 +60,7 @@ const Home: NextPage = () => {
         />
       </Head>
       <main className="relative flex h-screen w-screen flex-col bg-black md:flex-col lg:flex-row">
-        
+
         <div className=" absolute h-full w-full overflow-clip after:absolute after:h-full after:w-full after:bg-gradient-to-b after:from-white after:to-black after:opacity-50 after:mix-blend-multiply">
           <Image
             src="/dark-whatever-background.jpg"
@@ -69,9 +69,9 @@ const Home: NextPage = () => {
             fill={true}
           />
         </div>
-        
-        <div className=" z-10 flex h-full justify-center pt-20 pb-12 md:pt-36 lg:relative lg:w-1/2 lg:pt-36 ">
-          <div className="h-full w-4/5 flex-col items-start text-center md:ml-64 md:text-left lg:ml-64 lg:text-left">
+
+        <div className=" z-10 flex h-full flex-col justify-between pt-20 pb-8 md:justify-center md:pt-36 md:pb-12 lg:relative lg:w-1/2 lg:pt-36 lg:pb-0 lg:justify-start">
+          <div className="w-4/5 flex-col items-start text-center md:ml-64 md:text-left lg:ml-64 lg:text-left mx-auto md:mx-0">
             {/* My Name / Title  */}
             <div className="flex flex-col gap-2">
               <div className=" word-container tranistion flex flex-col text-white">
@@ -92,8 +92,8 @@ const Home: NextPage = () => {
               </div>
             </div>
             {/* Quote */}
-            <div className=" relative flex h-full flex-col gap-2 ">
-              <div className=" text-white md:mt-[8rem] md:w-2/3 lg:mt-28 lg:w-2/3">
+            <div className=" relative hidden md:flex flex-col gap-2 md:mt-[8rem] lg:mt-28">
+              <div className=" text-white md:w-2/3">
                 <div
                   className="quote-box-current slide-in-right -translate-x-24  text-white/80 opacity-0 transition duration-1500 delay-500 hover:text-white/100"
                   onClick={() => {
@@ -115,6 +115,33 @@ const Home: NextPage = () => {
                     </span>
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Quote - Bottom Position */}
+          <div className="flex md:hidden w-4/5 flex-col gap-2 mx-auto">
+            <div className=" text-white">
+              <div
+                className="quote-box-current slide-in-right -translate-x-24  text-white/80 opacity-0 transition duration-1500 delay-500 hover:text-white/100 cursor-pointer"
+                onClick={() => {
+                  updateQuotes();
+                }}
+              >
+                <p className=" quote-box-current-text text-center text-lg italic"></p>
+                <p className="text-center text-sm mt-2">
+                  <span className=" italic">~ </span>
+                  <span className="italic underline transition duration-75 hover:text-red-700">
+                    <Link
+                      href={"#"}
+                      className="quote-box-current-source"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Source
+                    </Link>
+                  </span>
+                </p>
               </div>
             </div>
           </div>
