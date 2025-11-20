@@ -6,6 +6,7 @@ import {
   InstagramLogoIcon,
   GitHubLogoIcon,
   LinkedInLogoIcon,
+  HamburgerMenuIcon,
 } from "@radix-ui/react-icons";
 import {
   Sheet,
@@ -166,8 +167,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 </NavButton>
               </a>
             </div>
-            {/* Navigation Links */}
-            <div className="slide-in-left z-30 flex translate-x-24 flex-row gap-2 sm:gap-4 md:gap-2 text-sm sm:text-base md:text-lg opacity-0 transition delay-1000 duration-1500 sm:mr-4 sm:mt-2 md:mr-8 md:mt-4 lg:mr-8 lg:mt-4 lg:gap-2">
+            {/* Navigation Links - Desktop */}
+            <div className="slide-in-left z-30 hidden md:flex translate-x-24 flex-row gap-2 sm:gap-4 md:gap-2 text-sm sm:text-base md:text-lg opacity-0 transition delay-1000 duration-1500 sm:mr-4 sm:mt-2 md:mr-8 md:mt-4 lg:mr-8 lg:mt-4 lg:gap-2">
               <NavButton
                 className="text-sm sm:text-base md:text-lg"
                 variant="ghost"
@@ -219,6 +220,80 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 </SheetContent>
               </Sheet>
             </div>
+
+            {/* Hamburger Menu - Mobile */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <NavButton
+                  variant="ghost"
+                  size="icon"
+                  className="slide-in-left z-30 translate-x-24 md:hidden opacity-0 transition delay-1000 duration-1500"
+                >
+                  <HamburgerMenuIcon />
+                </NavButton>
+              </SheetTrigger>
+              <SheetContent
+                className="border-l-4 border-l-slate-500 bg-black/80 text-white w-[250px]"
+                side="right"
+              >
+                <SheetHeader>
+                  <SheetTitle className="text-xl">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="relative h-6"></div>
+                <div className="flex flex-col gap-4">
+                  <NavButton
+                    className="text-base text-left justify-start"
+                    variant="ghost"
+                    size="default"
+                  >
+                    Blog
+                  </NavButton>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <NavButton
+                        className="text-base text-left justify-start text-red-700 hover:text-red-500"
+                        variant="ghost"
+                        size="default"
+                      >
+                        Contact Me
+                      </NavButton>
+                    </SheetTrigger>
+                    <SheetContent
+                      className="border-l-4 border-l-slate-500 bg-black/80 text-white"
+                      side="right"
+                    >
+                      <SheetHeader>
+                        <SheetTitle className="text-xl">Contact Me</SheetTitle>
+                        <SheetDescription>
+                          Feel free to drop me a message anytime if you have
+                          questions, need advice, or just want to chat. I&apos;m
+                          here to help and always open to interesting
+                          conversations.
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="relative h-6"></div>
+                      <div className="relative">
+                        {isContactMeFormSubmitted.current && (
+                          <div className="sheet-form-completed-container absolute w-full opacity-0 transition">
+                            <div className="flex flex-col items-center justify-center gap-3 py-8">
+                              <div className="text-2xl">✓</div>
+                              <p className="text-center text-lg font-semibold">Thanks for reaching out!</p>
+                              <p className="text-center text-sm text-gray-400">I&apos;ll get back to you soon.</p>
+                            </div>
+                          </div>
+                        )}
+                        {!isContactMeFormSubmitted.current && (
+                          <div className="sheet-form-container absolute w-full transition">
+                            <ContactMeForm submiteHandler={handleFormSubmit} />
+                          </div>
+                        )}
+                      </div>
+                      <SheetFooter />
+                    </SheetContent>
+                  </Sheet>
+                </div>
+              </SheetContent>
+            </Sheet>
           </nav>
           <Component {...pageProps} />
         </div>
