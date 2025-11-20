@@ -117,15 +117,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Analytics />
       {/* Loading Overlay */}
       <div className="loading-div-container absolute flex h-full w-full flex-row overflow-hidden">
-        <div className="rotating-loading-image absolute z-40 flex h-full w-full items-center justify-center font-gravitas text-2xl transition duration-1500">
+        <div className="rotating-loading-image absolute z-40 flex h-full w-full items-center justify-center font-gravitas text-sm sm:text-lg md:text-2xl lg:text-2xl transition duration-1500">
           <Image
             className="absolute z-40 animate-spin duration-10000"
             src="/loading-circle.png"
             alt="Ike Nwosu • Software Engineer"
-            width={400}
-            height={400}
+            width={200}
+            height={200}
+            sizes="(max-width: 640px) 200px, (max-width: 1024px) 300px, 400px"
           />
-          <p className="loading-text font-gravitas text-2xl text-white"></p>
+          <p className="loading-text font-gravitas text-sm sm:text-lg md:text-2xl lg:text-2xl text-white"></p>
         </div>
         <div className="inset-0 flex h-full w-full flex-col md:flex-row lg:flex-row">
           <div className="loading-div-half-left z-30 h-1/2 w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
@@ -134,9 +135,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </div>
       <div className="overflow-clip text-white">
         <div className="h-screen w-screen bg-gradient-to-b">
-          <nav className="absolute z-20 flex w-full justify-between bg-[#0C3049] px-4 py-1 md:bg-transparent md:px-24 lg:bg-transparent lg:px-24">
+          <nav className="absolute z-20 flex w-full justify-between bg-[#0C3049] px-3 py-2 sm:px-4 sm:py-1 md:bg-transparent md:px-8 lg:bg-transparent lg:px-24">
             {/* Social Links */}
-            <div className="slide-in-right flex -translate-x-24 flex-row gap-2 opacity-0 transition delay-1000 duration-1500 md:px-4 lg:mt-4 lg:px-4">
+            <div className="slide-in-right flex -translate-x-24 flex-row gap-1 sm:gap-2 opacity-0 transition delay-1000 duration-1500 sm:px-2 md:px-4 lg:mt-4 lg:px-4">
               <a
                 href="https://www.linkedin.com/in/ikenwosu"
                 target="_blank"
@@ -166,9 +167,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
               </a>
             </div>
             {/* Navigation Links */}
-            <div className="slide-in-left z-30 flex translate-x-24 flex-row gap-6 text-lg opacity-0 transition delay-1000 duration-1500 md:mr-8 md:mt-4 md:gap-2 lg:mr-8 lg:mt-4 lg:gap-2">
+            <div className="slide-in-left z-30 flex translate-x-24 flex-row gap-2 sm:gap-4 md:gap-2 text-sm sm:text-base md:text-lg opacity-0 transition delay-1000 duration-1500 sm:mr-4 sm:mt-2 md:mr-8 md:mt-4 lg:mr-8 lg:mt-4 lg:gap-2">
               <NavButton
-                className="text-lg"
+                className="text-sm sm:text-base md:text-lg"
                 variant="ghost"
                 size="skinny"
               >
@@ -177,7 +178,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               <Sheet>
                 <SheetTrigger asChild>
                   <NavButton
-                    className="text-lg text-red-700 hover:text-red-500"
+                    className="text-sm sm:text-base md:text-lg text-red-700 hover:text-red-500"
                     variant="ghost"
                     size="skinny"
                   >
