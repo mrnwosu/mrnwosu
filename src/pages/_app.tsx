@@ -22,12 +22,8 @@ import {
 import { NavButton } from "@/components/ui/navButton";
 import {
   elementClassToggle,
-  setTextForElementBySelector,
 } from "utils/uiHelpers";
 import { useRef } from "react";
-import { Observable } from "rxjs";
-import { interval, takeWhile } from "rxjs";
-import { useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { animate } from "motion";
 import Image from "next/image";
@@ -92,9 +88,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
     isLoaded.current = true;
   }
 
-  const loadingText = useRef<string>("Loading");
-  const loadingTextInterval = useRef<Observable<number> | null>(null);
-  const isFirstLoad = useRef<boolean>(true);
   const isLoaded = useRef<boolean>(false);
   const isContactMeFormSubmitted = useRef<boolean>(false);
 
