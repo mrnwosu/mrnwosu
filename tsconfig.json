@@ -22,8 +22,8 @@
       "@pages/*": ["pages/*"],
       "@styles/*": ["styles/*"],
       "@utils/*": ["utils/*"],
-      "@models/*": ["models/*"],
-    },
+      "@models/*": ["models/*"]
+    }
   },
   
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],

@@ -45,11 +45,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
     if (loadingLeftElems.length === 0) return;
 
-    animate(".loading-div-half-left", {
+    void animate(".loading-div-half-left", {
       x: "-100%",
     });
 
-    animate(".loading-div-half-right", {
+    void animate(".loading-div-half-right", {
       x: "100%",
     });
 
