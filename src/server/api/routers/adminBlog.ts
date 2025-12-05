@@ -1,13 +1,20 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, adminProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { Prisma } from "@prisma/client";
+
+// Slug validation regex: lowercase letters, numbers, and hyphens only
+const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export const adminBlogRouter = createTRPCRouter({
-  create: protectedProcedure
+  create: adminProcedure
     .input(
       z.object({
         title: z.string().min(1, "Title is required"),
-        slug: z.string().min(1, "Slug is required"),
+        slug: z
+          .string()
+          .min(1, "Slug is required")
+          .regex(slugRegex, "Slug must be lowercase letters, numbers, and hyphens only"),
         description: z.string().min(1, "Description is required"),
         content: z.string().min(1, "Content is required"),
         tags: z.string().default(""),
@@ -15,13 +22,6 @@ export const adminBlogRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Only admins can create posts
-      if (!ctx.session.user.isAdmin) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Only admins can create posts",
-        });
-      }
 
       try {
         const post = await ctx.prisma.blogPost.create({
@@ -36,12 +36,13 @@ export const adminBlogRouter = createTRPCRouter({
         });
         return post;
       } catch (error) {
-        const err = error as Record<string, string>;
-        if (err.code === "P2002") {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "A post with this slug already exists",
-          });
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === "P2002") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "A post with this slug already exists",
+            });
+          }
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -50,15 +51,7 @@ export const adminBlogRouter = createTRPCRouter({
       }
     }),
 
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    // Only admins can view all posts
-    if (!ctx.session.user.isAdmin) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Only admins can view posts",
-      });
-    }
-
+  getAll: adminProcedure.query(async ({ ctx }) => {
     try {
       const posts = await ctx.prisma.blogPost.findMany({
         orderBy: { createdAt: "desc" },
@@ -72,17 +65,9 @@ export const adminBlogRouter = createTRPCRouter({
     }
   }),
 
-  getById: protectedProcedure
+  getById: adminProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      // Only admins can view individual posts
-      if (!ctx.session.user.isAdmin) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Only admins can view posts",
-        });
-      }
-
       try {
         const post = await ctx.prisma.blogPost.findUnique({
           where: { id: input.id },
@@ -105,12 +90,16 @@ export const adminBlogRouter = createTRPCRouter({
       }
     }),
 
-  update: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: z.string(),
         title: z.string().min(1).optional(),
-        slug: z.string().min(1).optional(),
+        slug: z
+          .string()
+          .min(1)
+          .regex(slugRegex, "Slug must be lowercase letters, numbers, and hyphens only")
+          .optional(),
         description: z.string().min(1).optional(),
         content: z.string().min(1).optional(),
         tags: z.string().optional(),
@@ -118,40 +107,34 @@ export const adminBlogRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Only admins can update posts
-      if (!ctx.session.user.isAdmin) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Only admins can update posts",
-        });
-      }
-
       try {
+        const updateData: Record<string, unknown> = {};
+        if (input.title !== undefined) updateData.title = input.title;
+        if (input.slug !== undefined) updateData.slug = input.slug;
+        if (input.description !== undefined) updateData.description = input.description;
+        if (input.content !== undefined) updateData.content = input.content;
+        if (input.tags !== undefined) updateData.tags = input.tags;
+        if (input.published !== undefined) updateData.published = input.published;
+
         const post = await ctx.prisma.blogPost.update({
           where: { id: input.id },
-          data: {
-            ...(input.title && { title: input.title }),
-            ...(input.slug && { slug: input.slug }),
-            ...(input.description && { description: input.description }),
-            ...(input.content && { content: input.content }),
-            ...(input.tags !== undefined && { tags: input.tags }),
-            ...(input.published !== undefined && { published: input.published }),
-          },
+          data: updateData,
         });
         return post;
       } catch (error) {
-        const err = error as Record<string, string>;
-        if (err.code === "P2002") {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "A post with this slug already exists",
-          });
-        }
-        if (err.code === "P2025") {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Post not found",
-          });
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === "P2002") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "A post with this slug already exists",
+            });
+          }
+          if (error.code === "P2025") {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Post not found",
+            });
+          }
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -160,29 +143,22 @@ export const adminBlogRouter = createTRPCRouter({
       }
     }),
 
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Only admins can delete posts
-      if (!ctx.session.user.isAdmin) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Only admins can delete posts",
-        });
-      }
-
       try {
         await ctx.prisma.blogPost.delete({
           where: { id: input.id },
         });
         return { success: true };
       } catch (error) {
-        const err = error as Record<string, string>;
-        if (err.code === "P2025") {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Post not found",
-          });
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === "P2025") {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Post not found",
+            });
+          }
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

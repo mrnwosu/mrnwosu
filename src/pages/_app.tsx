@@ -1,5 +1,4 @@
 import { type AppType } from "next/app";
-import { type Session } from "next-auth";
 import { Analytics } from "@vercel/analytics/react";
 import { ContactMeForm } from "../@/components/contactMeForm";
 import {
@@ -27,9 +26,9 @@ import { api } from "../utils/api";
 import "../styles/globals.css";
 import useAllImageLoaded from "hooks/useAllImageLoaded";
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps,
 }) => {
 
   useAllImageLoaded({

@@ -66,18 +66,23 @@ model ContactSubmission {
     id        String   @id @default(cuid())
     name      String
     email     String
-    message   String
+    message   String   @db.Text
     createdAt DateTime @default(now())
+
+    @@index([createdAt])
 }
 
 model BlogPost {
     id          String   @id @default(cuid())
     title       String
     slug        String   @unique
-    description String
-    content     String
+    description String   @db.Text
+    content     String   @db.Text
     tags        String   @default("")
     published   Boolean  @default(false)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+
+    @@index([published, createdAt])
+    @@index([createdAt])
 }

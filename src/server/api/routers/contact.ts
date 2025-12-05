@@ -1,6 +1,28 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+
+// Simple in-memory rate limiting (for production, use Redis or similar)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
+const MAX_SUBMISSIONS_PER_HOUR = 3;
+
+function checkRateLimit(identifier: string): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(identifier);
+
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(identifier, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+
+  if (record.count >= MAX_SUBMISSIONS_PER_HOUR) {
+    return false;
+  }
+
+  record.count++;
+  return true;
+}
 
 export const contactRouter = createTRPCRouter({
   submit: publicProcedure
@@ -12,6 +34,14 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Rate limit check using email as identifier
+      if (!checkRateLimit(input.email)) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: `Too many submissions. Please try again later.`,
+        });
+      }
+
       try {
         const submission = await ctx.prisma.contactSubmission.create({
           data: {
@@ -29,15 +59,7 @@ export const contactRouter = createTRPCRouter({
       }
     }),
 
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    // Only admins can view all submissions
-    if (!ctx.session.user.isAdmin) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Only admins can view submissions",
-      });
-    }
-
+  getAll: adminProcedure.query(async ({ ctx }) => {
     try {
       const submissions = await ctx.prisma.contactSubmission.findMany({
         orderBy: { createdAt: "desc" },
@@ -51,17 +73,9 @@ export const contactRouter = createTRPCRouter({
     }
   }),
 
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Only admins can delete submissions
-      if (!ctx.session.user.isAdmin) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Only admins can delete submissions",
-        });
-      }
-
       try {
         await ctx.prisma.contactSubmission.delete({
           where: { id: input.id },

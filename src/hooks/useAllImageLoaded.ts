@@ -1,37 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function useAllImageLoaded(props: {
   handleAllImagesLoaded: () => void;
 }) {
+  const { handleAllImagesLoaded } = props;
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [imagesTotal, setImagesTotal] = useState(0);
 
-  const handleImageLoad = (isLoaded: boolean) => {
-    const newCount = imagesLoaded + (isLoaded ? 1 : 0);
-    console.log(`Image loaded: ${newCount}/${imagesTotal}`);
-    setImagesLoaded((prev) => prev + (isLoaded ? 1 : 0));
-  };
+  const handleImageLoad = useCallback((isLoaded: boolean) => {
+    setImagesLoaded((prev) => {
+      const newCount = prev + (isLoaded ? 1 : 0);
+      console.log(`Image loaded: ${newCount}`);
+      return newCount;
+    });
+  }, []);
 
-  const handleImageLoadEnd = () => {
+  const handleImageLoadEnd = useCallback(() => {
     setImagesTotal((prev) => prev + 1);
-  };
+  }, []);
 
   useEffect(() => {
-    console.log({imagesLoaded, imagesTotal});
     const allImages = document.querySelectorAll("img");
     setImagesTotal(allImages.length);
     allImages.forEach((img) => {
       img.addEventListener("load", () => handleImageLoad(true));
     });
-
-    
-  }, []);
+  }, [handleImageLoad]);
 
   useEffect(() => {
     if (imagesLoaded >= imagesTotal && imagesTotal > 0) {
-      props.handleAllImagesLoaded();
+      handleAllImagesLoaded();
     }
-  }, [imagesLoaded, imagesTotal]);
+  }, [imagesLoaded, imagesTotal, handleAllImagesLoaded]);
 
   return {
     handleImageLoad,
