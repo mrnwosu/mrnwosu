@@ -9,7 +9,7 @@ Add one repository secret:
 **Settings → Secrets and variables → Actions → New repository secret**
 
 ```
-Name: POSTGRES_URL
+Name: DATABASE_URL
 Value: postgresql://postgres:PASSWORD@your-host:5432/mrnwosu
 ```
 
@@ -57,7 +57,7 @@ npx prisma validate
 ## Troubleshooting
 
 **Migration fails in GitHub Actions:**
-- Verify `POSTGRES_URL` secret is correct
+- Verify `DATABASE_URL` secret is correct
 - Check database is accessible from GitHub
 - Run `npx prisma validate` locally
 - Review migration SQL: `cat prisma/migrations/*/migration.sql`
