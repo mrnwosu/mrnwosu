@@ -28,12 +28,12 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
-        run: npx prisma generate
+        run: npm exec -- prisma generate
         env:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 
       - name: Deploy database migrations
-        run: npx prisma migrate deploy
+        run: npm exec -- prisma migrate deploy
         env:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 
