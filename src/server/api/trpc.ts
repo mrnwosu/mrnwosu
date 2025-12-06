@@ -15,10 +15,11 @@
  * These allow you to access things when processing a request, like the
  * database, the session, etc.
  */
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { type Session } from "next-auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth";
 
-import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
 
 type CreateContextOptions = {
@@ -48,11 +49,9 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
-
-  // Get the session from the server using the getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
+export const createTRPCContext = async (_opts: FetchCreateContextFnOptions) => {
+  // Get the session from the server using getServerSession
+  const session = await getServerSession(authOptions);
 
   return createInnerTRPCContext({
     session,
