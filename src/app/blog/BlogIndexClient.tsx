@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { getAllBlogPosts, getAllBlogTags } from "@utils/blog";
 import type { BlogPostMetadata } from "@utils/blog";
 import { motion } from "motion/react";
 import Link from "next/link";
 
-interface BlogIndexProps {
+interface BlogIndexClientProps {
   posts: BlogPostMetadata[];
   tags: string[];
 }
@@ -46,7 +45,7 @@ const tagVariants = {
   },
 };
 
-export default function BlogIndex({ posts, tags }: BlogIndexProps) {
+export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const filteredPosts = useMemo(() => {
@@ -178,17 +177,4 @@ export default function BlogIndex({ posts, tags }: BlogIndexProps) {
       </motion.div>
     </div>
   );
-}
-
-export function getStaticProps() {
-  const posts = getAllBlogPosts();
-  const tags = getAllBlogTags();
-
-  return {
-    props: {
-      posts,
-      tags,
-    },
-    revalidate: 3600, // Revalidate every hour
-  };
 }

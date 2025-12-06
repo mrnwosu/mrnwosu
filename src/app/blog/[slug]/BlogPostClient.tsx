@@ -1,11 +1,12 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { getBlogPost, getBlogSlugs } from "@utils/blog";
 import type { BlogPost } from "@utils/blog";
 
-interface BlogPostPageProps {
-  post: BlogPost | null;
+interface BlogPostClientProps {
+  post: BlogPost;
 }
 
 const itemVariants = {
@@ -20,7 +21,7 @@ const itemVariants = {
   },
 };
 
-export default function BlogPostPage({ post }: BlogPostPageProps) {
+export default function BlogPostClient({ post }: BlogPostClientProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
@@ -35,19 +36,6 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  if (!post) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="text-center">
-          <h1 className="mb-4 text-3xl font-bold text-white">Post not found</h1>
-          <Link href="/blog" className="text-cyan-400 hover:text-cyan-300">
-            Back to blog
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -290,38 +278,4 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
       `}</style>
     </div>
   );
-}
-
-export function getStaticPaths() {
-  const slugs = getBlogSlugs();
-
-  return {
-    paths: slugs.map((slug) => ({
-      params: {
-        slug: slug.replace(".md", ""),
-      },
-    })),
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const post = await getBlogPost(params.slug);
-
-  if (!post) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      post,
-    },
-    revalidate: 3600,
-  };
 }

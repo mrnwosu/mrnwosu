@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import Link from "next/link";
 
-const PersonPage = () => {
+export default function PersonPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHoveringCard, setIsHoveringCard] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -364,6 +364,4 @@ const PersonPage = () => {
       )}
     </div>
   );
-};
-
-export default PersonPage;
+}
