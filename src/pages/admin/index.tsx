@@ -78,3 +78,8 @@ const AdminDashboard: NextPage = () => {
 };
 
 export default AdminDashboard;
+
+// Disable static generation for admin pages (requires session)
+export function getServerSideProps() {
+  return { props: {} };
+}

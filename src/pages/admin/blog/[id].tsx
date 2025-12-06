@@ -240,3 +240,8 @@ const EditBlogPost: NextPage = () => {
 };
 
 export default EditBlogPost;
+
+// Disable static generation for admin pages (requires session)
+export function getServerSideProps() {
+  return { props: {} };
+}
