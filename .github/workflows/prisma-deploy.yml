@@ -19,11 +19,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Install Prisma client and run migrations
         env:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-        run: |
-          npx prisma generate
-          npx prisma migrate deploy
+        run: npm ci
+
+      - name: Run Prisma migrations
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+        run: npx prisma migrate deploy
