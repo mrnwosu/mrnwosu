@@ -1,9 +1,11 @@
-import { defineConfig } from '@prisma/internals'
+import { defineConfig, env } from '@prisma/config'
 
 export default defineConfig({
-  datasources: {
-    db: {
-      url: process.env.POSTGRES_URL,
-    },
+  schema: 'prisma/schema.prisma',
+  migrations: { 
+    path: 'prisma/migrations',
   },
+  datasource: { 
+    url: env("POSTGRES_URL") 
+  }
 })
