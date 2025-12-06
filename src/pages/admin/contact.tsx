@@ -126,3 +126,8 @@ const AdminContact: NextPage = () => {
 };
 
 export default AdminContact;
+
+// Disable static generation for admin pages (requires session)
+export function getServerSideProps() {
+  return { props: {} };
+}

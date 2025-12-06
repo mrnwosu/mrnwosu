@@ -224,3 +224,8 @@ const NewBlogPost: NextPage = () => {
 };
 
 export default NewBlogPost;
+
+// Disable static generation for admin pages (requires session)
+export function getServerSideProps() {
+  return { props: {} };
+}
