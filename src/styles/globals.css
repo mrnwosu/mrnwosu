@@ -18,22 +18,9 @@
     }
 }
 
-/* Slide-in animation for hero text */
-@keyframes slideInFromLeft {
-    from {
-        transform: translateX(-24px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.slide-in-right {
-    animation: slideInFromLeft 1s ease-out forwards;
-    animation-delay: 0.3s;
-}
+/* Slide-in marker classes - used by LoadingScreen to target elements for animation */
+/* The actual transition is handled by Tailwind's transition utilities on the elements */
+/* LoadingScreen removes opacity-0 and translate-x classes to trigger the transition */
 
 /* Duration utility for transitions */
 .duration-1500 {
