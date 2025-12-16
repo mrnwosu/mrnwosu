@@ -17,11 +17,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <TRPCReactProvider>
           <Analytics />
           <LoadingScreen />
-          <div className="overflow-clip text-white">
-            <div className="h-screen w-screen bg-gradient-to-b">
-              <Navigation />
-              {children}
-            </div>
+          <div className="min-h-screen text-white">
+            <Navigation />
+            {children}
           </div>
         </TRPCReactProvider>
       </body>

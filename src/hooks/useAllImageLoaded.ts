@@ -1,33 +1,29 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function useAllImageLoaded(props: {
   handleAllImagesLoaded: () => void;
 }) {
   const { handleAllImagesLoaded } = props;
-  const [imagesLoaded, setImagesLoaded] = useState(0);
-  const [imagesTotal, setImagesTotal] = useState(0);
   const hasTriggered = useRef(false);
+  const callbackRef = useRef(handleAllImagesLoaded);
 
-  const handleImageLoad = useCallback((isLoaded: boolean) => {
-    setImagesLoaded((prev) => {
-      const newCount = prev + (isLoaded ? 1 : 0);
-      console.log(`Image loaded: ${newCount}`);
-      return newCount;
-    });
-  }, []);
-
-  const handleImageLoadEnd = useCallback(() => {
-    setImagesTotal((prev) => prev + 1);
-  }, []);
+  // Keep callback ref up to date without causing effect re-runs
+  useEffect(() => {
+    callbackRef.current = handleAllImagesLoaded;
+  }, [handleAllImagesLoaded]);
 
   useEffect(() => {
+    const triggerCompletion = () => {
+      if (!hasTriggered.current) {
+        hasTriggered.current = true;
+        callbackRef.current();
+      }
+    };
+
     // Set a maximum timeout to prevent infinite loading
     const maxTimeout = setTimeout(() => {
-      if (!hasTriggered.current) {
-        console.log("Loading timeout reached - triggering completion");
-        hasTriggered.current = true;
-        handleAllImagesLoaded();
-      }
+      console.log("Loading timeout reached - triggering completion");
+      triggerCompletion();
     }, 3000); // 3 second max wait
 
     const allImages = document.querySelectorAll("img");
@@ -36,47 +32,42 @@ export default function useAllImageLoaded(props: {
     if (allImages.length === 0) {
       // No images found, trigger immediately
       console.log("No images found - triggering completion immediately");
-      hasTriggered.current = true;
-      handleAllImagesLoaded();
       clearTimeout(maxTimeout);
+      triggerCompletion();
       return;
     }
 
     let loadedCount = 0;
-    setImagesTotal(allImages.length);
+    const totalImages = allImages.length;
+
+    const checkAllLoaded = () => {
+      loadedCount++;
+      console.log(`Image loaded: ${loadedCount}/${totalImages}`);
+      if (loadedCount >= totalImages) {
+        console.log("All images loaded");
+        clearTimeout(maxTimeout);
+        triggerCompletion();
+      }
+    };
 
     allImages.forEach((img) => {
       // Check if image is already loaded (cached)
       if (img.complete && img.naturalHeight !== 0) {
-        loadedCount++;
-        handleImageLoad(true);
+        checkAllLoaded();
       } else {
         // Add listener for images that haven't loaded yet
         const onLoad = () => {
-          handleImageLoad(true);
+          checkAllLoaded();
           img.removeEventListener("load", onLoad);
         };
         img.addEventListener("load", onLoad);
       }
     });
 
-    console.log(`Already loaded images: ${loadedCount}/${allImages.length}`);
+    console.log(`Initial check - already loaded: ${loadedCount}/${totalImages}`);
 
     return () => {
       clearTimeout(maxTimeout);
     };
-  }, [handleImageLoad, handleAllImagesLoaded]);
-
-  useEffect(() => {
-    if (imagesLoaded >= imagesTotal && imagesTotal > 0 && !hasTriggered.current) {
-      console.log(`All images loaded: ${imagesLoaded}/${imagesTotal}`);
-      hasTriggered.current = true;
-      handleAllImagesLoaded();
-    }
-  }, [imagesLoaded, imagesTotal, handleAllImagesLoaded]);
-
-  return {
-    handleImageLoad,
-    handleImageLoadEnd,
-  };
+  }, []); // Empty dependency array - run once on mount
 }

@@ -12,9 +12,30 @@
     src: url('CormorantUpright-Medium.ttf')
 } */
 
-@layer base{
-
+@layer base {
     body {
-        @apply bg-black;
+        @apply bg-warm-950;
     }
+}
+
+/* Slide-in animation for hero text */
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-24px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.slide-in-right {
+    animation: slideInFromLeft 1s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+/* Duration utility for transitions */
+.duration-1500 {
+    transition-duration: 1500ms;
 }

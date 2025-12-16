@@ -75,8 +75,8 @@ export function LoadingScreen() {
         <p className="loading-text font-gravitas text-sm sm:text-lg md:text-2xl lg:text-2xl text-white"></p>
       </div>
       <div className="inset-0 flex h-full w-full flex-col md:flex-row lg:flex-row">
-        <div className="loading-div-half-left z-30 h-1/2 w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
-        <div className="loading-div-half-right z-30 h-1/2 w-full bg-cyan-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
+        <div className="loading-div-half-left z-30 h-1/2 w-full bg-warm-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
+        <div className="loading-div-half-right z-30 h-1/2 w-full bg-warm-800 transition duration-1500 ease-in-out md:h-full md:w-1/2 lg:h-full lg:w-1/2"></div>
       </div>
     </div>
   );

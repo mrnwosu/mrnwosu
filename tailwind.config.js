@@ -18,6 +18,21 @@ module.exports = {
       },
     },
     extend: {
+      colors: {
+        warm: {
+          50: "#faf8f5",
+          100: "#f5f0e8",
+          200: "#e8dcc8",
+          300: "#d4c4a8",
+          400: "#b8a07a",
+          500: "#9a8262",
+          600: "#7d6650",
+          700: "#5c4a3d",
+          800: "#3d3129",
+          900: "#231c17",
+          950: "#120e0b",
+        },
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

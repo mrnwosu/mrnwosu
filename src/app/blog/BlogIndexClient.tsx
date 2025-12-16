@@ -65,18 +65,19 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black px-4 py-20 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-warm-950 px-4 py-16 sm:px-6 sm:py-24 md:py-32 lg:px-8">
       {/* Hero Section */}
       <motion.div
-        className="mb-20 text-center"
+        className="mb-12 text-center sm:mb-16 md:mb-20"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="mb-4 text-4xl font-bold text-white sm:text-5xl">
+        <h1 className="font-gravitas text-3xl text-warm-100 sm:text-4xl md:text-5xl lg:text-6xl mb-3 sm:mb-4">
           Blog
         </h1>
-        <p className="text-lg text-gray-400">
+        <div className="mx-auto h-0.5 w-16 rounded-full bg-warm-500 mb-4 sm:h-1 sm:w-24 sm:mb-6" />
+        <p className="text-base text-warm-300 sm:text-lg">
           Thoughts, ideas, and stories from the code.
         </p>
       </motion.div>
@@ -84,7 +85,7 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
       {/* Tags Filter */}
       {tags.length > 0 && (
         <motion.div
-          className="mb-12 flex flex-wrap justify-center gap-3"
+          className="mb-8 flex flex-wrap justify-center gap-2 sm:mb-12 sm:gap-3"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -92,10 +93,10 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
           <motion.button
             variants={tagVariants}
             onClick={() => setSelectedTag(null)}
-            className={`rounded-full px-4 py-2 font-medium transition-all duration-300 ${
+            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-300 sm:px-4 sm:py-2 sm:text-base ${
               selectedTag === null
-                ? "bg-cyan-500 text-black shadow-lg shadow-cyan-500/50"
-                : "border border-gray-600 text-gray-300 hover:border-cyan-500 hover:text-cyan-400"
+                ? "bg-warm-500 text-warm-950 shadow-lg shadow-warm-500/30"
+                : "border border-warm-600 text-warm-300 hover:border-warm-400 hover:text-warm-200"
             }`}
           >
             All
@@ -105,10 +106,10 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
               key={tag}
               variants={tagVariants}
               onClick={() => setSelectedTag(tag)}
-              className={`rounded-full px-4 py-2 font-medium transition-all duration-300 ${
+              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-300 sm:px-4 sm:py-2 sm:text-base ${
                 selectedTag === tag
-                  ? "bg-yellow-400 text-black shadow-lg shadow-yellow-400/50"
-                  : "border border-gray-600 text-gray-300 hover:border-yellow-400 hover:text-yellow-400"
+                  ? "bg-warm-400 text-warm-950 shadow-lg shadow-warm-400/30"
+                  : "border border-warm-600 text-warm-300 hover:border-warm-400 hover:text-warm-200"
               }`}
             >
               {tag}
@@ -119,7 +120,7 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
 
       {/* Blog Posts Grid */}
       <motion.div
-        className="mx-auto max-w-4xl space-y-6"
+        className="mx-auto max-w-4xl space-y-4 sm:space-y-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -130,34 +131,31 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
               key={post.slug}
               variants={itemVariants}
               whileHover={{ x: 4 }}
-              className="group relative overflow-hidden rounded-lg border border-gray-800 bg-gradient-to-r from-gray-900 to-black p-6 transition-all duration-300 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/20"
+              className="group relative overflow-hidden rounded-xl border border-warm-700/30 bg-warm-800/50 p-5 transition-all duration-300 hover:border-warm-500/50 hover:bg-warm-800/70 sm:rounded-2xl sm:p-6"
             >
-              {/* Animated gradient background on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/0 to-cyan-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-10" />
-
               <Link href={`/blog/${post.slug}`} className="relative block">
-                <div className="mb-3 flex items-start justify-between">
-                  <h2 className="flex-1 text-2xl font-bold text-white transition-colors duration-300 group-hover:text-cyan-400">
+                <div className="mb-2 flex items-start justify-between sm:mb-3">
+                  <h2 className="flex-1 text-lg font-semibold text-warm-100 transition-colors duration-300 group-hover:text-warm-50 sm:text-xl md:text-2xl">
                     {post.title}
                   </h2>
                 </div>
 
-                <p className="mb-4 text-gray-400">{post.description}</p>
+                <p className="mb-3 text-sm text-warm-300 sm:mb-4 sm:text-base">{post.description}</p>
 
-                <div className="mb-4 flex flex-wrap gap-2">
+                <div className="mb-3 flex flex-wrap gap-1.5 sm:mb-4 sm:gap-2">
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-block rounded-full bg-gray-800 px-3 py-1 text-xs font-medium text-gray-300 transition-colors duration-300 group-hover:bg-cyan-900/50 group-hover:text-cyan-300"
+                      className="inline-block rounded-full bg-warm-700/50 px-2.5 py-1 text-xs font-medium text-warm-200 transition-colors duration-300 group-hover:bg-warm-600/50 sm:px-3 sm:text-sm"
                     >
                       #{tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-gray-500">
+                <div className="flex items-center justify-between text-xs text-warm-400 sm:text-sm">
                   <time dateTime={post.date}>{formatDate(post.date)}</time>
-                  <span className="text-cyan-400/70 transition-colors duration-300 group-hover:text-cyan-400">
+                  <span className="text-warm-400 transition-colors duration-300 group-hover:text-warm-300">
                     Read more →
                   </span>
                 </div>
@@ -166,10 +164,10 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
           ))
         ) : (
           <motion.div
-            className="rounded-lg border border-gray-800 bg-gray-900/50 p-12 text-center"
+            className="rounded-xl border border-warm-700/30 bg-warm-800/50 p-8 text-center sm:rounded-2xl sm:p-12"
             variants={itemVariants}
           >
-            <p className="text-gray-400">
+            <p className="text-warm-300">
               No posts found for this tag. Check back soon!
             </p>
           </motion.div>
