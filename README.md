@@ -37,8 +37,3 @@ I'm a software engineer who enjoys building clean, performant web applications a
 Feel free to reach out if you want to collaborate on a project or just chat about tech.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/mrnwosu)
-[![Portfolio](https://img.shields.io/badge/Portfolio-000000?style=flat-square&logo=vercel&logoColor=white)](https://mrnwosu.com)
-
----
-
-![Profile Views](https://komarev.com/ghpvc/?username=mrnwosu&color=blueviolet&style=flat-square)
