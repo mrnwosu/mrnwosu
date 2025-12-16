@@ -73,9 +73,9 @@ export function LoadingScreen() {
           className="absolute z-40 animate-spin duration-10000"
           src="/loading-circle.png"
           alt="Ike Nwosu • Software Engineer"
-          width={200}
-          height={200}
-          sizes="(max-width: 640px) 200px, (max-width: 1024px) 300px, 400px"
+          width={400}
+          height={400}
+          sizes="(max-width: 640px) 280px, (max-width: 1024px) 350px, 400px"
         />
         <p className="loading-text font-gravitas text-sm sm:text-lg md:text-2xl lg:text-2xl text-white"></p>
       </div>

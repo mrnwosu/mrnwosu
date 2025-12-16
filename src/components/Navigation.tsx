@@ -9,20 +9,16 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "../@/components/ui/sheet";
 import { NavButton } from "../@/components/ui/navButton";
-import { ContactMeForm } from "../@/components/contactMeForm";
-import { elementClassToggle } from "@utils/uiHelpers";
-import { useRef, useState, useEffect } from "react";
+import { ContactSheet } from "./ContactSheet";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export function Navigation() {
-  const isContactMeFormSubmitted = useRef<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -33,33 +29,6 @@ export function Navigation() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  function handleFormSubmit() {
-    isContactMeFormSubmitted.current = true;
-    if (isContactMeFormSubmitted.current) {
-      elementClassToggle(
-        ".sheet-form-container",
-        ["opacity-100"],
-        ["opacity-0"]
-      );
-      elementClassToggle(
-        ".sheet-form-completed-container",
-        ["opacity-0"],
-        ["opacity-100"]
-      );
-    } else {
-      elementClassToggle(
-        ".sheet-form-container",
-        ["opacity-100"],
-        ["opacity-0"]
-      );
-      elementClassToggle(
-        ".sheet-form-completed-container",
-        ["opacity-0"],
-        ["opacity-100"]
-      );
-    }
-  }
 
   return (
     <nav className={`fixed top-0 z-20 flex w-full justify-between px-3 py-2 sm:px-4 sm:py-1 md:px-8 lg:px-24 transition-all duration-300 ${isScrolled ? "bg-[#422C19]/10" : ""}`}>
@@ -108,45 +77,14 @@ export function Navigation() {
         <Sheet>
           <SheetTrigger asChild>
             <NavButton
-              className="text-sm sm:text-base md:text-lg text-red-700 hover:text-red-500"
+              className="text-sm sm:text-base md:text-lg text-warm-500 hover:text-warm-400"
               variant="ghost"
               size="skinny"
             >
               Contact Me
             </NavButton>
           </SheetTrigger>
-          <SheetContent
-            className="border-l-4 border-l-slate-500 bg-black/80 text-white"
-            side="right"
-          >
-            <SheetHeader>
-              <SheetTitle className="text-xl">Contact Me</SheetTitle>
-              <SheetDescription>
-                Feel free to drop me a message anytime if you have
-                questions, need advice, or just want to chat. I&apos;m
-                here to help and always open to interesting
-                conversations.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="relative h-6"></div>
-            <div className="relative">
-              {isContactMeFormSubmitted.current && (
-                <div className="sheet-form-completed-container absolute w-full opacity-0 transition">
-                  <div className="flex flex-col items-center justify-center gap-3 py-8">
-                    <div className="text-2xl">✓</div>
-                    <p className="text-center text-lg font-semibold">Thanks for reaching out!</p>
-                    <p className="text-center text-sm text-gray-400">I&apos;ll get back to you soon.</p>
-                  </div>
-                </div>
-              )}
-              {!isContactMeFormSubmitted.current && (
-                <div className="sheet-form-container absolute w-full transition">
-                  <ContactMeForm submiteHandler={handleFormSubmit} />
-                </div>
-              )}
-            </div>
-            <SheetFooter />
-          </SheetContent>
+          <ContactSheet />
         </Sheet>
       </div>
 
@@ -162,17 +100,17 @@ export function Navigation() {
           </NavButton>
         </SheetTrigger>
         <SheetContent
-          className="border-l-4 border-l-slate-500 bg-black/80 text-white w-[250px]"
+          className="border-l-2 border-l-warm-600 bg-warm-900/95 backdrop-blur-sm text-warm-100 w-[250px]"
           side="right"
         >
           <SheetHeader>
-            <SheetTitle className="text-xl">Menu</SheetTitle>
+            <SheetTitle className="font-gravitas text-xl text-warm-100">Menu</SheetTitle>
           </SheetHeader>
           <div className="relative h-6"></div>
           <div className="flex flex-col gap-4">
             <Link href="/blog">
               <NavButton
-                className="text-base text-left justify-start"
+                className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
                 variant="ghost"
                 size="default"
               >
@@ -182,45 +120,14 @@ export function Navigation() {
             <Sheet>
               <SheetTrigger asChild>
                 <NavButton
-                  className="text-base text-left justify-start text-red-700 hover:text-red-500"
+                  className="text-base text-left justify-start text-warm-500 hover:text-warm-400"
                   variant="ghost"
                   size="default"
                 >
                   Contact Me
                 </NavButton>
               </SheetTrigger>
-              <SheetContent
-                className="border-l-4 border-l-slate-500 bg-black/80 text-white"
-                side="right"
-              >
-                <SheetHeader>
-                  <SheetTitle className="text-xl">Contact Me</SheetTitle>
-                  <SheetDescription>
-                    Feel free to drop me a message anytime if you have
-                    questions, need advice, or just want to chat. I&apos;m
-                    here to help and always open to interesting
-                    conversations.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="relative h-6"></div>
-                <div className="relative">
-                  {isContactMeFormSubmitted.current && (
-                    <div className="sheet-form-completed-container absolute w-full opacity-0 transition">
-                      <div className="flex flex-col items-center justify-center gap-3 py-8">
-                        <div className="text-2xl">✓</div>
-                        <p className="text-center text-lg font-semibold">Thanks for reaching out!</p>
-                        <p className="text-center text-sm text-gray-400">I&apos;ll get back to you soon.</p>
-                      </div>
-                    </div>
-                  )}
-                  {!isContactMeFormSubmitted.current && (
-                    <div className="sheet-form-container absolute w-full transition">
-                      <ContactMeForm submiteHandler={handleFormSubmit} />
-                    </div>
-                  )}
-                </div>
-                <SheetFooter />
-              </SheetContent>
+              <ContactSheet />
             </Sheet>
           </div>
         </SheetContent>
