@@ -18,11 +18,21 @@ import {
 import { NavButton } from "../@/components/ui/navButton";
 import { ContactMeForm } from "../@/components/contactMeForm";
 import { elementClassToggle } from "@utils/uiHelpers";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 
 export function Navigation() {
   const isContactMeFormSubmitted = useRef<boolean>(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function handleFormSubmit() {
     isContactMeFormSubmitted.current = true;
@@ -52,7 +62,7 @@ export function Navigation() {
   }
 
   return (
-    <nav className="absolute z-20 flex w-full justify-between bg-[#0C3049] px-3 py-2 sm:px-4 sm:py-1 md:bg-transparent md:px-8 lg:bg-transparent lg:px-24">
+    <nav className={`fixed top-0 z-20 flex w-full justify-between px-3 py-2 sm:px-4 sm:py-1 md:px-8 lg:px-24 transition-all duration-300 ${isScrolled ? "bg-[#422C19]/10" : ""}`}>
       {/* Social Links */}
       <div className="slide-in-right flex -translate-x-24 flex-row gap-1 sm:gap-2 opacity-0 transition delay-1000 duration-1500 sm:px-2 md:px-4 lg:mt-4 lg:px-4">
         <a

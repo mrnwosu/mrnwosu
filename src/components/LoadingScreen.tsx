@@ -1,7 +1,7 @@
 "use client";
 
 import { elementClassToggle } from "@utils/uiHelpers";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { animate } from "motion";
 import Image from "next/image";
@@ -10,12 +10,17 @@ import useAllImageLoaded from "../hooks/useAllImageLoaded";
 export function LoadingScreen() {
   const isLoaded = useRef<boolean>(false);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+  }, []);
+
   useAllImageLoaded({
     handleAllImagesLoaded: handleImageLoaded,
   });
 
   function handleImageLoaded() {
     console.log("All images loaded");
+    document.body.style.overflow = "";
 
     const loadingLeftElems = document.querySelectorAll(
       ".loading-div-half-left"
