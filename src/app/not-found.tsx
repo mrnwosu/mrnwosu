@@ -30,7 +30,7 @@ export default function NotFound() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Post Not Found
+            Page Not Found
           </motion.h2>
           <motion.p
             className="mx-auto mb-6 max-w-sm text-sm text-warm-300 sm:mb-8 sm:max-w-md sm:text-base"
@@ -38,7 +38,7 @@ export default function NotFound() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            The blog post you&apos;re looking for doesn&apos;t exist or has been removed.
+            The page you&apos;re looking for doesn&apos;t exist or has been moved.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -48,10 +48,10 @@ export default function NotFound() {
             whileTap={{ scale: 0.95 }}
           >
             <Link
-              href="/blog"
+              href="/"
               className="inline-block rounded-lg bg-warm-500 px-5 py-2 text-sm font-medium text-warm-950 transition hover:bg-warm-400 sm:px-6 sm:py-2.5 sm:text-base"
             >
-              Back to Blog
+              Go Home
             </Link>
           </motion.div>
         </div>
