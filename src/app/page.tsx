@@ -61,7 +61,7 @@ export default function Home() {
         {/* Background Image with Parallax */}
         <div
           className="absolute -inset-4 sm:-inset-8 md:-inset-12"
-          style={{ transform: `translateY(${heroParallax - 50}px)` }}
+          style={{ transform: `translateY(${heroParallax - 50}px)`, willChange: "transform" }}
         >
           <Image
             src="/winner.webp"
@@ -80,7 +80,7 @@ export default function Home() {
         {/* Hero Text with Parallax */}
         <div
           className="absolute inset-0 flex items-end pb-24 sm:items-center sm:pb-0"
-          style={{ transform: `translateY(${textParallax}px)` }}
+          style={{ transform: `translateY(${textParallax}px)`, willChange: "transform" }}
         >
           <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
             <div className="flex items-center gap-4 sm:gap-8 md:gap-12">
