@@ -3,7 +3,14 @@
 import Image from "next/image";
 import { useParallax } from "../hooks/useParallax";
 import { FadeInSection } from "@components/FadeInSection";
+import { FloatingOrbs } from "@components/FloatingOrbs";
+import { TiltCard } from "@components/TiltCard";
+import { AnimatedCounter } from "@components/AnimatedCounter";
+import { AnimatedUnderline } from "@components/AnimatedUnderline";
+import { GlowingBadge } from "@components/GlowingBadge";
+import { TextReveal } from "@components/TextReveal";
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 
 const titles = [
   "Software Engineer",
@@ -17,6 +24,12 @@ const titles = [
   "Protein Enthusiast",
   "Keyboard Warrior",
 ];
+
+const techBadges = {
+  backend: [".NET", "C#", "Azure", "SQL"],
+  frontend: ["React", "Angular", "TypeScript", "JavaScript"],
+  cloud: ["Azure", "GCP", "CI/CD", "DevOps"],
+};
 
 export default function Home() {
   const heroParallax = useParallax(0.4);
@@ -81,13 +94,13 @@ export default function Home() {
                   Mr.
                 </p>
                 <p
-                  className={`font-gravitas text-4xl text-warm-100 sm:text-5xl md:text-7xl lg:text-8xl transition-all duration-200 ${
+                  className={`font-gravitas text-4xl bg-gradient-to-r from-warm-100 via-warm-300 to-warm-100 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient sm:text-5xl md:text-7xl lg:text-8xl transition-all duration-200 ${
                     isBouncing ? "brightness-110" : "brightness-100"
                   }`}
                 >
                   Nwosu
                 </p>
-                <div className="my-2 h-0.5 w-24 rounded-full bg-warm-400 sm:my-3 sm:h-1 sm:w-32 md:w-48 lg:w-64" />
+                <div className="my-2 h-0.5 w-24 rounded-full bg-gradient-to-r from-warm-600 via-warm-400 to-warm-500 sm:my-3 sm:h-1 sm:w-32 md:w-48 lg:w-64" />
                 <div className="h-7 overflow-hidden sm:h-8 md:h-10 lg:h-12">
                   <p
                     className={`text-sm tracking-wider text-warm-300 sm:text-lg sm:tracking-widest md:text-xl lg:text-2xl transition-all duration-300 ${
@@ -119,13 +132,14 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40">
-        <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
+      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40 overflow-hidden">
+        <FloatingOrbs />
+        <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24 relative z-10">
           <FadeInSection direction="up">
             <h2 className="font-gravitas text-3xl text-warm-100 sm:text-4xl md:text-5xl lg:text-6xl mb-3 sm:mb-4">
-              About Me
+              <TextReveal>About Me</TextReveal>
             </h2>
-            <div className="h-0.5 w-16 rounded-full bg-warm-500 mb-8 sm:h-1 sm:w-24 sm:mb-12" />
+            <AnimatedUnderline className="w-16 mb-8 sm:w-24 sm:mb-12" />
           </FadeInSection>
 
           <div className="grid gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
@@ -151,18 +165,19 @@ export default function Home() {
       </section>
 
       {/* Software Engineering Section */}
-      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40 bg-warm-900/50">
-        <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
+      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40 bg-warm-900/50 overflow-hidden">
+        <FloatingOrbs />
+        <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24 relative z-10">
           <FadeInSection direction="right">
             <h2 className="font-gravitas text-3xl text-warm-100 sm:text-4xl md:text-5xl lg:text-6xl mb-3 sm:mb-4">
-              Engineering
+              <TextReveal>Engineering</TextReveal>
             </h2>
-            <div className="h-0.5 w-16 rounded-full bg-warm-500 mb-8 sm:h-1 sm:w-24 sm:mb-12" />
+            <AnimatedUnderline className="w-16 mb-8 sm:w-24 sm:mb-12" delay={200} />
           </FadeInSection>
 
-          <div className="grid gap-4 sm:gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3" style={{ perspective: "1000px" }}>
             <FadeInSection direction="left" delay={100}>
-              <div className="p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-warm-800/50 border border-warm-700/30 h-full">
+              <TiltCard className="p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-warm-800/50 border border-warm-700/30 h-full backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-warm-100 mb-3 sm:text-xl sm:mb-4">
                   Backend Development
                 </h3>
@@ -170,20 +185,25 @@ export default function Home() {
                   Building scalable APIs and services with a focus on performance and maintainability.
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {[".NET", "C#", "Azure", "SQL"].map((tech) => (
-                    <span
+                  {techBadges.backend.map((tech, index) => (
+                    <motion.span
                       key={tech}
                       className="px-2.5 py-1 text-xs rounded-full bg-warm-700/50 text-warm-200 sm:px-3 sm:text-sm"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + index * 0.1 }}
+                      whileHover={{ scale: 1.1, backgroundColor: "rgba(168, 131, 100, 0.3)" }}
                     >
                       {tech}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
-              </div>
+              </TiltCard>
             </FadeInSection>
 
             <FadeInSection direction="up" delay={200}>
-              <div className="p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-warm-800/50 border border-warm-700/30 h-full">
+              <TiltCard className="p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-warm-800/50 border border-warm-700/30 h-full backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-warm-100 mb-3 sm:text-xl sm:mb-4">
                   Frontend Development
                 </h3>
@@ -191,20 +211,25 @@ export default function Home() {
                   Crafting responsive, intuitive user interfaces that delight users.
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {["React", "Angular", "TypeScript", "JavaScript"].map((tech) => (
-                    <span
+                  {techBadges.frontend.map((tech, index) => (
+                    <motion.span
                       key={tech}
                       className="px-2.5 py-1 text-xs rounded-full bg-warm-700/50 text-warm-200 sm:px-3 sm:text-sm"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + index * 0.1 }}
+                      whileHover={{ scale: 1.1, backgroundColor: "rgba(168, 131, 100, 0.3)" }}
                     >
                       {tech}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
-              </div>
+              </TiltCard>
             </FadeInSection>
 
             <FadeInSection direction="right" delay={300}>
-              <div className="p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-warm-800/50 border border-warm-700/30 h-full sm:col-span-2 lg:col-span-1">
+              <TiltCard className="p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-warm-800/50 border border-warm-700/30 h-full sm:col-span-2 lg:col-span-1 backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-warm-100 mb-3 sm:text-xl sm:mb-4">
                   Cloud & Infrastructure
                 </h3>
@@ -212,23 +237,28 @@ export default function Home() {
                   Designing and deploying cloud-native solutions that scale with business needs.
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {["Azure", "GCP", "CI/CD", "DevOps"].map((tech) => (
-                    <span
+                  {techBadges.cloud.map((tech, index) => (
+                    <motion.span
                       key={tech}
                       className="px-2.5 py-1 text-xs rounded-full bg-warm-700/50 text-warm-200 sm:px-3 sm:text-sm"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + index * 0.1 }}
+                      whileHover={{ scale: 1.1, backgroundColor: "rgba(168, 131, 100, 0.3)" }}
                     >
                       {tech}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
-              </div>
+              </TiltCard>
             </FadeInSection>
           </div>
 
           <FadeInSection direction="up" delay={400}>
             <div className="mt-10 sm:mt-16 text-center">
               <p className="text-warm-400 text-base sm:text-lg">
-                10+ years of building software that matters
+                <AnimatedCounter value={10} suffix="+" /> years of building software that matters
               </p>
             </div>
           </FadeInSection>
@@ -236,13 +266,14 @@ export default function Home() {
       </section>
 
       {/* Fitness Section */}
-      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40">
-        <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
+      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40 overflow-hidden">
+        <FloatingOrbs />
+        <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24 relative z-10">
           <FadeInSection direction="left">
             <h2 className="font-gravitas text-3xl text-warm-100 sm:text-4xl md:text-5xl lg:text-6xl mb-3 sm:mb-4">
-              Fitness
+              <TextReveal>Fitness</TextReveal>
             </h2>
-            <div className="h-0.5 w-16 rounded-full bg-warm-500 mb-8 sm:h-1 sm:w-24 sm:mb-12" />
+            <AnimatedUnderline className="w-16 mb-8 sm:w-24 sm:mb-12" delay={200} />
           </FadeInSection>
 
           <div className="grid gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-16">
@@ -271,13 +302,10 @@ export default function Home() {
                 </p>
                 <div className="flex flex-wrap gap-2 sm:gap-3">
                   {["Savage Race", "Spartan Race", "5K", "8K", "10K", "Marathon (2025)"].map(
-                    (race) => (
-                      <span
-                        key={race}
-                        className="px-3 py-1.5 text-xs rounded-full border border-warm-500/50 text-warm-300 sm:px-4 sm:py-2 sm:text-sm"
-                      >
+                    (race, index) => (
+                      <GlowingBadge key={race} delay={index * 100}>
                         {race}
-                      </span>
+                      </GlowingBadge>
                     )
                   )}
                 </div>
@@ -292,7 +320,13 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
           <FadeInSection direction="up">
             <div className="flex flex-col items-center gap-3 text-center sm:gap-4">
-              <p className="font-gravitas text-xl text-warm-100 sm:text-2xl">Mr. Nwosu</p>
+              <motion.p
+                className="font-gravitas text-xl text-warm-100 sm:text-2xl"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                Mr. Nwosu
+              </motion.p>
               <p className="text-sm text-warm-400 sm:text-base">Software Engineer • Athlete</p>
             </div>
           </FadeInSection>
