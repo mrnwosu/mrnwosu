@@ -1,4 +1,4 @@
-# Hey there, I'm Nwosu 👋
+# Hey there 👋🏾
 
 I'm a software engineer who enjoys building clean, performant web applications and solving interesting problems.
 

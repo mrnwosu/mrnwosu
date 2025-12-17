@@ -1,11 +1,14 @@
 import { useEffect, useRef } from "react";
 
+const MIN_LOADING_TIME = 1000; // Minimum 1 second loading screen
+
 export default function useAllImageLoaded(props: {
   handleAllImagesLoaded: () => void;
 }) {
   const { handleAllImagesLoaded } = props;
   const hasTriggered = useRef(false);
   const callbackRef = useRef(handleAllImagesLoaded);
+  const mountTimeRef = useRef(Date.now());
 
   // Keep callback ref up to date without causing effect re-runs
   useEffect(() => {
@@ -14,7 +17,20 @@ export default function useAllImageLoaded(props: {
 
   useEffect(() => {
     const triggerCompletion = () => {
-      if (!hasTriggered.current) {
+      if (hasTriggered.current) return;
+
+      const elapsed = Date.now() - mountTimeRef.current;
+      const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsed);
+
+      if (remainingTime > 0) {
+        // Wait for the remaining time before triggering
+        setTimeout(() => {
+          if (!hasTriggered.current) {
+            hasTriggered.current = true;
+            callbackRef.current();
+          }
+        }, remainingTime);
+      } else {
         hasTriggered.current = true;
         callbackRef.current();
       }
@@ -30,8 +46,8 @@ export default function useAllImageLoaded(props: {
     console.log(`Total images found: ${allImages.length}`);
 
     if (allImages.length === 0) {
-      // No images found, trigger immediately
-      console.log("No images found - triggering completion immediately");
+      // No images found, trigger after minimum time
+      console.log("No images found - triggering completion after minimum time");
       clearTimeout(maxTimeout);
       triggerCompletion();
       return;

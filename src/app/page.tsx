@@ -11,6 +11,7 @@ import { GlowingBadge } from "@components/GlowingBadge";
 import { TextReveal } from "@components/TextReveal";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
+import { isLoadingCompleted } from "@utils/uiHelpers";
 
 const titles = [
   "Software Engineer",
@@ -37,6 +38,8 @@ export default function Home() {
   const [titleIndex, setTitleIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [scrollCtaBounce, setScrollCtaBounce] = useState(false);
+  // If loading already completed (navigating back), show elements immediately
+  const [skipLoadingAnimation] = useState(() => isLoadingCompleted());
 
   // Ensure page starts at top on navigation
   useEffect(() => {
@@ -97,7 +100,7 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
             <div className="flex items-center gap-4 sm:gap-8 md:gap-12">
               {/* Text to the left */}
-              <div className="slide-in-right -translate-x-24 opacity-0 transition duration-1500">
+              <div className={`slide-in-right transition duration-1500 ${skipLoadingAnimation ? "" : "-translate-x-24 opacity-0"}`}>
                 <p
                   className={`font-gravitas text-4xl text-warm-100 sm:text-5xl md:text-7xl lg:text-8xl transition-transform duration-300 ${
                     isAnimating ? "scale-[1.01]" : "scale-100"
@@ -130,7 +133,7 @@ export default function Home() {
         </div>
 
         {/* Scroll CTA */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 slide-in-right -translate-y-8 opacity-0 transition duration-1500 delay-700 sm:bottom-8">
+        <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 slide-in-right transition duration-1500 delay-700 sm:bottom-8 ${skipLoadingAnimation ? "" : "-translate-y-8 opacity-0"}`}>
           <button
             onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
             className={`group flex flex-col items-center gap-2 text-warm-300 hover:text-warm-100 transition-all cursor-pointer ${

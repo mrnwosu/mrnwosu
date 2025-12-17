@@ -1,3 +1,14 @@
+// Track if initial loading animation has completed
+let loadingCompleted = false;
+
+export function setLoadingCompleted(completed: boolean): void {
+  loadingCompleted = completed;
+}
+
+export function isLoadingCompleted(): boolean {
+  return loadingCompleted;
+}
+
 export function elementClassToggle(
   cssQuerySelector: string,
   addClasses: string[] | null,

@@ -1,6 +1,6 @@
 "use client";
 
-import { elementClassToggle } from "@utils/uiHelpers";
+import { elementClassToggle, setLoadingCompleted } from "@utils/uiHelpers";
 import { useRef, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { animate } from "motion";
@@ -59,7 +59,9 @@ export function LoadingScreen() {
     ]);
 
     elementClassToggle(".blob", ["opacity-50"], null);
+    elementClassToggle(".loading-div-container", ["pointer-events-none"], null);
     isLoaded.current = true;
+    setLoadingCompleted(true);
   }
 
   return (
