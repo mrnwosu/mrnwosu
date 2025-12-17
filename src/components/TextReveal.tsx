@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useReducedMotionContext } from "../contexts/ReducedMotionContext";
 
 interface TextRevealProps {
   children: string;
@@ -17,7 +17,7 @@ export function TextReveal({
 }: TextRevealProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const prefersReducedMotion: boolean = useReducedMotion();
+  const prefersReducedMotion = useReducedMotionContext();
 
   if (prefersReducedMotion) {
     return <span className={className}>{children}</span>;

@@ -2,16 +2,16 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import type { ReactNode } from "react";
-import { useState, useEffect } from "react";
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useState, useEffect, memo } from "react";
+import { useReducedMotionContext } from "../contexts/ReducedMotionContext";
 
 interface TiltCardProps {
   children: ReactNode;
   className?: string;
 }
 
-export function TiltCard({ children, className = "" }: TiltCardProps) {
-  const prefersReducedMotion: boolean = useReducedMotion();
+function TiltCardComponent({ children, className = "" }: TiltCardProps) {
+  const prefersReducedMotion = useReducedMotionContext();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -82,3 +82,5 @@ export function TiltCard({ children, className = "" }: TiltCardProps) {
     </motion.div>
   );
 }
+
+export const TiltCard = memo(TiltCardComponent);

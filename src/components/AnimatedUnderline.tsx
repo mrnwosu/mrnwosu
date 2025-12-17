@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useReducedMotionContext } from "../contexts/ReducedMotionContext";
 
 interface AnimatedUnderlineProps {
   className?: string;
@@ -15,7 +15,7 @@ export function AnimatedUnderline({
 }: AnimatedUnderlineProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const prefersReducedMotion: boolean = useReducedMotion();
+  const prefersReducedMotion = useReducedMotionContext();
 
   if (prefersReducedMotion) {
     return (

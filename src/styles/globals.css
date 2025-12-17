@@ -53,3 +53,46 @@
 .duration-1500 {
     transition-duration: 1500ms;
 }
+
+/* Tech badge fade-in animation (replaces motion.span whileInView) */
+@keyframes fade-in-scale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-in-scale {
+    animation: fade-in-scale 0.3s ease-out forwards;
+}
+
+/* Floating orb animation (replaces motion.div for better performance) */
+@keyframes float-orb {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(var(--float-x, 30px), calc(var(--float-y, 30px) * -1)) scale(1.1);
+    }
+    50% {
+        transform: translate(calc(var(--float-x, 30px) * -0.66), var(--float-y, 30px)) scale(0.9);
+    }
+    75% {
+        transform: translate(calc(var(--float-x, 30px) * 0.33), calc(var(--float-y, 30px) * -0.33)) scale(1.05);
+    }
+}
+
+.animate-float-orb {
+    animation: float-orb 20s ease-in-out infinite;
+}
+
+/* Content-visibility optimization for below-fold sections */
+/* Browser skips rendering until section is near viewport */
+.content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px; /* Estimated height to prevent layout shift */
+}

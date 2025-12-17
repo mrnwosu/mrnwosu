@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useReducedMotionContext } from "../contexts/ReducedMotionContext";
 
 interface GlowingBadgeProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface GlowingBadgeProps {
 }
 
 export function GlowingBadge({ children, delay = 0 }: GlowingBadgeProps) {
-  const prefersReducedMotion: boolean = useReducedMotion();
+  const prefersReducedMotion = useReducedMotionContext();
 
   if (prefersReducedMotion) {
     return (

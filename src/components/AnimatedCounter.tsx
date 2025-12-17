@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useSpring, useTransform } from "motion/react";
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useReducedMotionContext } from "../contexts/ReducedMotionContext";
 
 interface AnimatedCounterProps {
   value: number;
@@ -17,7 +17,7 @@ export function AnimatedCounter({
 }: AnimatedCounterProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const prefersReducedMotion: boolean = useReducedMotion();
+  const prefersReducedMotion = useReducedMotionContext();
   const [displayValue, setDisplayValue] = useState(0);
 
   const spring = useSpring(0, {
