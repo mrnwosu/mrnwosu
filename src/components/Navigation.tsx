@@ -8,6 +8,7 @@ import {
 } from "@radix-ui/react-icons";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -126,27 +127,31 @@ export function Navigation() {
           </SheetHeader>
           <div className="relative h-6"></div>
           <div className="flex flex-col gap-4">
-            <Link
-              href="/"
-              className={`transition-opacity duration-300 ${isHome ? "opacity-0 pointer-events-none hidden" : "opacity-100"}`}
-            >
-              <NavButton
-                className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
-                variant="ghost"
-                size="default"
+            <SheetClose asChild>
+              <Link
+                href="/"
+                className={`transition-opacity duration-300 ${isHome ? "opacity-0 pointer-events-none hidden" : "opacity-100"}`}
               >
-                Home
-              </NavButton>
-            </Link>
-            <Link href="/blog">
-              <NavButton
-                className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
-                variant="ghost"
-                size="default"
-              >
-                Blog
-              </NavButton>
-            </Link>
+                <NavButton
+                  className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
+                  variant="ghost"
+                  size="default"
+                >
+                  Home
+                </NavButton>
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link href="/blog">
+                <NavButton
+                  className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
+                  variant="ghost"
+                  size="default"
+                >
+                  Blog
+                </NavButton>
+              </Link>
+            </SheetClose>
             <Sheet>
               <SheetTrigger asChild>
                 <NavButton
