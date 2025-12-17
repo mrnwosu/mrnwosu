@@ -316,10 +316,9 @@ export default function PersonPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {[
               { label: "Years Coding", value: "10+" },
-              { label: "Projects Built", value: "50+" },
               { label: "Coffee Consumed", value: "∞" },
             ].map((stat, idx) => (
               <motion.div
