@@ -36,19 +36,31 @@ export default function Home() {
   const textParallax = useParallax(0.2);
   const [titleIndex, setTitleIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isBouncing, setIsBouncing] = useState(false);
+  const [scrollCtaBounce, setScrollCtaBounce] = useState(false);
+
+  // Ensure page starts at top on navigation
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Trigger scroll CTA bounce after loading animation completes
+  useEffect(() => {
+    const bounceTimer = setTimeout(() => {
+      setScrollCtaBounce(true);
+      // Reset after animation completes
+      setTimeout(() => setScrollCtaBounce(false), 600);
+    }, 2800); // 2500ms loading + 300ms buffer for slide-ins to settle
+
+    return () => clearTimeout(bounceTimer);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
-      setIsBouncing(true);
       setTimeout(() => {
         setTitleIndex((prev) => (prev + 1) % titles.length);
         setIsAnimating(false);
       }, 300);
-      setTimeout(() => {
-        setIsBouncing(false);
-      }, 400);
     }, 1750);
 
     return () => clearInterval(interval);
@@ -87,15 +99,15 @@ export default function Home() {
               {/* Text to the left */}
               <div className="slide-in-right -translate-x-24 opacity-0 transition duration-1500">
                 <p
-                  className={`font-gravitas text-4xl text-warm-100 sm:text-5xl md:text-7xl lg:text-8xl transition-all duration-200 ${
-                    isBouncing ? "brightness-110" : "brightness-100"
+                  className={`font-gravitas text-4xl text-warm-100 sm:text-5xl md:text-7xl lg:text-8xl transition-transform duration-300 ${
+                    isAnimating ? "scale-[1.01]" : "scale-100"
                   }`}
                 >
                   Mr.
                 </p>
                 <p
-                  className={`font-gravitas text-4xl bg-gradient-to-r from-warm-100 via-warm-300 to-warm-100 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient sm:text-5xl md:text-7xl lg:text-8xl transition-all duration-200 ${
-                    isBouncing ? "brightness-110" : "brightness-100"
+                  className={`font-gravitas text-4xl bg-gradient-to-r from-warm-100 via-warm-300 to-warm-100 bg-clip-text text-transparent sm:text-5xl md:text-7xl lg:text-8xl transition-transform duration-300 ${
+                    isAnimating ? "scale-[1.01]" : "scale-100"
                   }`}
                 >
                   Nwosu
@@ -121,10 +133,15 @@ export default function Home() {
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 slide-in-right -translate-y-8 opacity-0 transition duration-1500 delay-700 sm:bottom-8">
           <button
             onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
-            className="group flex flex-col items-center gap-2 text-warm-300 hover:text-warm-100 transition-colors cursor-pointer"
+            className={`group flex flex-col items-center gap-2 text-warm-300 hover:text-warm-100 transition-all cursor-pointer ${
+              scrollCtaBounce ? "scale-125" : "scale-100"
+            }`}
+            style={{ transition: scrollCtaBounce ? "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)" : "transform 0.2s ease-out, color 0.15s" }}
           >
             <span className="text-xs tracking-widest uppercase sm:text-sm">Scroll</span>
-            <div className="relative h-10 w-6 rounded-full border border-warm-400 group-hover:border-warm-300 transition-colors sm:h-12 sm:w-7">
+            <div className={`relative h-10 w-6 rounded-full border border-warm-400 group-hover:border-warm-300 transition-colors sm:h-12 sm:w-7 ${
+              scrollCtaBounce ? "border-warm-200" : ""
+            }`}>
               <div className="absolute left-1/2 top-2 h-2 w-0.5 -translate-x-1/2 rounded-full bg-warm-400 animate-bounce group-hover:bg-warm-300 transition-colors" />
             </div>
           </button>
@@ -145,18 +162,18 @@ export default function Home() {
           <div className="grid gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
             <FadeInSection direction="left" delay={100}>
               <p className="text-base text-warm-200 leading-relaxed sm:text-lg md:text-xl">
-                A passionate software engineer with over a decade of experience building
-                robust, scalable applications. I thrive at the intersection of clean code
-                and practical solutions, always seeking to create software that makes a
-                real impact.
+                I love building things with code. There&apos;s something deeply satisfying
+                about turning an idea into something real—whether it&apos;s a side project,
+                a tool that solves a problem, or just experimenting with new tech to see
+                what&apos;s possible.
               </p>
             </FadeInSection>
 
             <FadeInSection direction="right" delay={200}>
               <p className="text-base text-warm-200 leading-relaxed sm:text-lg md:text-xl">
                 Beyond the keyboard, I believe in pushing limits—both mentally and
-                physically. Whether it&apos;s architecting complex systems or training for
-                the next race, I bring the same discipline and determination to
+                physically. Whether it&apos;s diving deep into a coding problem or training
+                for the next race, I bring the same curiosity and determination to
                 everything I do.
               </p>
             </FadeInSection>
@@ -182,7 +199,7 @@ export default function Home() {
                   Backend Development
                 </h3>
                 <p className="text-sm text-warm-300 mb-3 sm:text-base sm:mb-4">
-                  Building scalable APIs and services with a focus on performance and maintainability.
+                  I enjoy building APIs and backend systems—there&apos;s a certain elegance to well-structured server code.
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {techBadges.backend.map((tech, index) => (
@@ -208,7 +225,7 @@ export default function Home() {
                   Frontend Development
                 </h3>
                 <p className="text-sm text-warm-300 mb-3 sm:text-base sm:mb-4">
-                  Crafting responsive, intuitive user interfaces that delight users.
+                  I love bringing ideas to life visually—making interfaces that feel good to use.
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {techBadges.frontend.map((tech, index) => (
@@ -234,7 +251,7 @@ export default function Home() {
                   Cloud & Infrastructure
                 </h3>
                 <p className="text-sm text-warm-300 mb-3 sm:text-base sm:mb-4">
-                  Designing and deploying cloud-native solutions that scale with business needs.
+                  Cloud platforms and DevOps fascinate me—I like understanding how things run at scale.
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {techBadges.cloud.map((tech, index) => (
@@ -258,7 +275,7 @@ export default function Home() {
           <FadeInSection direction="up" delay={400}>
             <div className="mt-10 sm:mt-16 text-center">
               <p className="text-warm-400 text-base sm:text-lg">
-                <AnimatedCounter value={10} suffix="+" /> years of building software that matters
+                <AnimatedCounter value={10} suffix="+" /> years of tinkering, learning, and building
               </p>
             </div>
           </FadeInSection>

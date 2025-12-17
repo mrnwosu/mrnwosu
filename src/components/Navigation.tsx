@@ -16,10 +16,13 @@ import {
 import { NavButton } from "../@/components/ui/navButton";
 import { ContactSheet } from "./ContactSheet";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,6 +68,17 @@ export function Navigation() {
 
       {/* Navigation Links - Desktop */}
       <div className="slide-in-left z-30 hidden md:flex translate-x-24 flex-row gap-2 sm:gap-4 md:gap-2 text-sm sm:text-base md:text-lg opacity-0 transition delay-1000 duration-1500 sm:mr-4 sm:mt-2 md:mr-8 md:mt-4 lg:mr-8 lg:mt-4 lg:gap-2">
+        {!isHome && (
+          <Link href="/">
+            <NavButton
+              className="text-sm sm:text-base md:text-lg"
+              variant="ghost"
+              size="skinny"
+            >
+              Home
+            </NavButton>
+          </Link>
+        )}
         <Link href="/blog">
           <NavButton
             className="text-sm sm:text-base md:text-lg"
@@ -77,7 +91,7 @@ export function Navigation() {
         <Sheet>
           <SheetTrigger asChild>
             <NavButton
-              className="text-sm sm:text-base md:text-lg text-warm-500 hover:text-warm-400"
+              className="text-sm sm:text-base md:text-lg text-red-500 hover:text-red-400"
               variant="ghost"
               size="skinny"
             >
@@ -108,6 +122,17 @@ export function Navigation() {
           </SheetHeader>
           <div className="relative h-6"></div>
           <div className="flex flex-col gap-4">
+            {!isHome && (
+              <Link href="/">
+                <NavButton
+                  className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
+                  variant="ghost"
+                  size="default"
+                >
+                  Home
+                </NavButton>
+              </Link>
+            )}
             <Link href="/blog">
               <NavButton
                 className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
@@ -120,7 +145,7 @@ export function Navigation() {
             <Sheet>
               <SheetTrigger asChild>
                 <NavButton
-                  className="text-base text-left justify-start text-warm-500 hover:text-warm-400"
+                  className="text-base text-left justify-start text-red-500 hover:text-red-400"
                   variant="ghost"
                   size="default"
                 >

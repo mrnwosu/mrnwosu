@@ -15,7 +15,34 @@
 @layer base {
     body {
         @apply bg-warm-950;
+        /* Always show scrollbar gutter to prevent layout shift */
+        overflow-y: scroll;
     }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(28, 20, 15); /* warm-950 */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(87, 63, 47); /* warm-700 */
+    border-radius: 5px;
+    border: 2px solid rgb(28, 20, 15); /* warm-950 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(120, 89, 67); /* warm-600 */
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(87, 63, 47) rgb(28, 20, 15);
 }
 
 /* Slide-in marker classes - used by LoadingScreen to target elements for animation */

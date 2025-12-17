@@ -37,11 +37,7 @@ export function LoadingScreen() {
     });
 
     if (isMobile) {
-      elementClassToggle(
-        ".rotating-loading-image",
-        ["-translate-x-full", "opacity-0", "scale-0"],
-        null
-      );
+      elementClassToggle(".rotating-loading-image", ["opacity-0"], null);
     } else {
       elementClassToggle(
         ".rotating-loading-image",
