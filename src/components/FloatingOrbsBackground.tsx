@@ -35,13 +35,13 @@ function FloatingOrbsBackgroundComponent() {
       {visibleOrbs.map((orb) => (
         <div
           key={orb.id}
-          className="absolute rounded-full blur-3xl opacity-20 animate-float-orb"
+          className="absolute rounded-full blur-3xl opacity-30 animate-float-orb"
           style={{
             width: isMobile ? orb.mobileSize : orb.size,
             height: isMobile ? orb.mobileSize : orb.size,
             left: `${orb.x}%`,
             top: `${orb.y}%`,
-            background: `radial-gradient(circle, rgba(168, 131, 100, 0.4) 0%, rgba(168, 131, 100, 0) 70%)`,
+            background: `radial-gradient(circle, rgba(168, 131, 100, 0.6) 0%, rgba(168, 131, 100, 0) 70%)`,
             animationDuration: `${orb.duration}s`,
             animationDelay: `${orb.delay}s`,
             // Vary animation slightly per orb using custom properties
