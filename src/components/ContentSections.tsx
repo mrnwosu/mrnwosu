@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import { FadeInSection } from "@components/FadeInSection";
 import { TechBadge } from "@components/TechBadge";
 
@@ -36,6 +36,36 @@ const techBadges = {
 } as const;
 
 const raceBadges = ["Savage Race", "Spartan Race", "5K", "8K", "10K", "Marathon (2025)"] as const;
+
+const cyclingWords = ["tinkering", "learning", "building"] as const;
+
+function CyclingWord() {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setWordIndex((prev) => (prev + 1) % cyclingWords.length);
+        setIsAnimating(false);
+      }, 300);
+    }, 1750);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span
+      className={`inline-block transition-all duration-300 ${
+        isAnimating
+          ? "translate-y-1 opacity-0 blur-sm"
+          : "translate-y-0 opacity-100 blur-0"
+      }`}
+    >
+      {cyclingWords[wordIndex]}
+    </span>
+  );
+}
 
 function ContentSectionsComponent() {
   return (
@@ -135,7 +165,7 @@ function ContentSectionsComponent() {
           <FadeInSection direction="up" delay={400}>
             <div className="mt-10 sm:mt-16 text-center">
               <p className="text-warm-400 text-base sm:text-lg">
-                <AnimatedCounter value={10} suffix="+" /> years of tinkering, learning, and building
+                <AnimatedCounter value={10} suffix="+" /> years of <CyclingWord />.
               </p>
             </div>
           </FadeInSection>
