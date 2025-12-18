@@ -4,11 +4,11 @@ import BlogPostClient from "./BlogPostClient";
 
 export const revalidate = 3600; // Revalidate every hour
 
-export function generateStaticParams() {
-  const slugs = getBlogSlugs();
+export async function generateStaticParams() {
+  const slugs = await getBlogSlugs();
 
   return slugs.map((slug) => ({
-    slug: slug.replace(".md", ""),
+    slug,
   }));
 }
 

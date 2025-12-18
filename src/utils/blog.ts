@@ -1,15 +1,22 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import { prisma } from "@server/db";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
 import remarkGfm from "remark-gfm";
 
+export interface BlogTag {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export interface BlogPostMetadata {
+  id: string;
   title: string;
   description: string;
+  excerpt: string | null;
+  featuredImage: string | null;
   date: string;
-  tags: string[];
+  tags: BlogTag[];
   slug: string;
 }
 
@@ -17,54 +24,6 @@ export interface BlogPost extends BlogPostMetadata {
   content: string;
   html: string;
   readingTime: number;
-}
-
-const blogDirectory = path.join(process.cwd(), "public", "blog");
-
-/**
- * Get all blog post slugs
- */
-export function getBlogSlugs(): string[] {
-  if (!fs.existsSync(blogDirectory)) {
-    return [];
-  }
-  return fs.readdirSync(blogDirectory).filter((file) => file.endsWith(".md"));
-}
-
-/**
- * Get blog post metadata by slug
- */
-export function getBlogPostMetadata(slug: string): BlogPostMetadata | null {
-  const filePath = path.join(blogDirectory, `${slug}.md`);
-
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-
-  const fileContent = fs.readFileSync(filePath, "utf-8");
-  const { data } = matter(fileContent);
-
-  return {
-    title: (data.title as string) || "Untitled",
-    description: (data.description as string) || "",
-    date: String(data.date || ""),
-    tags: ((data.tags as string[]) || []),
-    slug,
-  };
-}
-
-/**
- * Get all blog posts metadata (for listing)
- */
-export function getAllBlogPosts(): BlogPostMetadata[] {
-  const slugs = getBlogSlugs();
-  return slugs
-    .map((file) => {
-      const slug = file.replace(".md", "");
-      return getBlogPostMetadata(slug);
-    })
-    .filter((post): post is BlogPostMetadata => post !== null)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 /**
@@ -77,59 +36,144 @@ function calculateReadingTime(content: string): number {
 }
 
 /**
- * Get full blog post by slug
+ * Convert markdown content to HTML
  */
-export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const filePath = path.join(blogDirectory, `${slug}.md`);
-
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-
-  const fileContent = fs.readFileSync(filePath, "utf-8");
-  const { data, content } = matter(fileContent);
-
+async function markdownToHtml(content: string): Promise<string> {
   const processedContent = await remark()
     .use(remarkGfm)
     .use(remarkHtml)
     .process(content);
+  return processedContent.toString();
+}
 
-  const html = processedContent.toString();
-  const readingTime = calculateReadingTime(content);
+/**
+ * Get all published blog posts metadata (for listing)
+ */
+export async function getAllBlogPosts(): Promise<BlogPostMetadata[]> {
+  const posts = await prisma.blogPost.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "desc" },
+    include: { tags: true },
+  });
+
+  return posts.map((post) => ({
+    id: post.id,
+    title: post.title,
+    description: post.description,
+    excerpt: post.excerpt,
+    featuredImage: post.featuredImage,
+    date: post.createdAt.toISOString(),
+    tags: post.tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      slug: tag.slug,
+    })),
+    slug: post.slug,
+  }));
+}
+
+/**
+ * Get all blog post slugs for static generation
+ */
+export async function getBlogSlugs(): Promise<string[]> {
+  const posts = await prisma.blogPost.findMany({
+    where: { published: true },
+    select: { slug: true },
+  });
+  return posts.map((post) => post.slug);
+}
+
+/**
+ * Get full blog post by slug
+ */
+export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  const post = await prisma.blogPost.findFirst({
+    where: {
+      slug,
+      published: true,
+    },
+    include: { tags: true },
+  });
+
+  if (!post) {
+    return null;
+  }
+
+  const html = await markdownToHtml(post.content);
+  const readingTime = calculateReadingTime(post.content);
 
   return {
-    title: (data.title as string) || "Untitled",
-    description: (data.description as string) || "",
-    date: String(data.date || ""),
-    tags: ((data.tags as string[]) || []),
-    slug,
-    content,
+    id: post.id,
+    title: post.title,
+    description: post.description,
+    excerpt: post.excerpt,
+    featuredImage: post.featuredImage,
+    date: post.createdAt.toISOString(),
+    tags: post.tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      slug: tag.slug,
+    })),
+    slug: post.slug,
+    content: post.content,
     html,
     readingTime,
   };
 }
 
 /**
- * Get blog posts by tag
+ * Get all unique tags from published blog posts
  */
-export function getBlogPostsByTag(tag: string): BlogPostMetadata[] {
-  return getAllBlogPosts().filter((post) =>
-    post.tags.map((t) => t.toLowerCase()).includes(tag.toLowerCase())
-  );
+export async function getAllBlogTags(): Promise<BlogTag[]> {
+  const tags = await prisma.tag.findMany({
+    where: {
+      posts: {
+        some: {
+          published: true,
+        },
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+
+  return tags.map((tag) => ({
+    id: tag.id,
+    name: tag.name,
+    slug: tag.slug,
+  }));
 }
 
 /**
- * Get all unique tags from all blog posts
+ * Get blog posts by tag slug
  */
-export function getAllBlogTags(): string[] {
-  const allPosts = getAllBlogPosts();
-  const tagsSet = new Set<string>();
-
-  allPosts.forEach((post) => {
-    post.tags.forEach((tag) => {
-      tagsSet.add(tag);
-    });
+export async function getBlogPostsByTag(
+  tagSlug: string
+): Promise<BlogPostMetadata[]> {
+  const posts = await prisma.blogPost.findMany({
+    where: {
+      published: true,
+      tags: {
+        some: {
+          slug: tagSlug,
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    include: { tags: true },
   });
 
-  return Array.from(tagsSet).sort();
+  return posts.map((post) => ({
+    id: post.id,
+    title: post.title,
+    description: post.description,
+    excerpt: post.excerpt,
+    featuredImage: post.featuredImage,
+    date: post.createdAt.toISOString(),
+    tags: post.tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      slug: tag.slug,
+    })),
+    slug: post.slug,
+  }));
 }

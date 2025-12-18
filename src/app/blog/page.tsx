@@ -8,9 +8,9 @@ export const metadata = {
 
 export const revalidate = 3600; // Revalidate every hour
 
-export default function BlogIndex() {
-  const posts = getAllBlogPosts();
-  const tags = getAllBlogTags();
+export default async function BlogIndex() {
+  const posts = await getAllBlogPosts();
+  const tags = await getAllBlogTags();
 
   return <BlogIndexClient posts={posts} tags={tags} />;
 }

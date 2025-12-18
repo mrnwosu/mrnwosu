@@ -23,6 +23,7 @@ export const blogRouter = createTRPCRouter({
           take: limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
           orderBy: { createdAt: "desc" },
+          include: { tags: true },
         });
 
         let nextCursor: string | undefined = undefined;
@@ -53,6 +54,7 @@ export const blogRouter = createTRPCRouter({
             slug: input.slug,
             published: true,
           },
+          include: { tags: true },
         });
 
         if (!post) {
@@ -79,6 +81,7 @@ export const blogRouter = createTRPCRouter({
       try {
         const post = await ctx.prisma.blogPost.findUnique({
           where: { slug: input.slug },
+          include: { tags: true },
         });
 
         if (!post) {

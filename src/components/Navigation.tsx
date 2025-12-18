@@ -5,6 +5,7 @@ import {
   GitHubLogoIcon,
   LinkedInLogoIcon,
   HamburgerMenuIcon,
+  ChevronDownIcon,
 } from "@radix-ui/react-icons";
 import {
   Sheet,
@@ -14,12 +15,20 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../@/components/ui/dropdown-menu";
 import { NavButton } from "../@/components/ui/navButton";
 import { ContactSheet } from "./ContactSheet";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { isLoadingCompleted } from "@utils/uiHelpers";
+import { useSession, signOut } from "next-auth/react";
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,6 +36,8 @@ export function Navigation() {
   const isHome = pathname === "/";
   // If loading already completed (navigating back), show elements immediately
   const [skipLoadingAnimation] = useState(() => isLoadingCompleted());
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.isAdmin;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,6 +116,39 @@ export function Navigation() {
           </SheetTrigger>
           <ContactSheet />
         </Sheet>
+        {isAdmin && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <NavButton
+                className="text-sm sm:text-base md:text-lg text-amber-400 hover:text-amber-300 font-semibold"
+                variant="ghost"
+                size="skinny"
+              >
+                Admin
+                <ChevronDownIcon className="ml-1 h-4 w-4" />
+              </NavButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/admin" className="w-full">
+                  Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/api-docs" target="_blank" className="w-full">
+                  API Docs
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => void signOut({ callbackUrl: "/" })}
+                className="text-red-400 focus:text-red-300"
+              >
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       {/* Hamburger Menu - Mobile */}
@@ -164,6 +208,46 @@ export function Navigation() {
               </SheetTrigger>
               <ContactSheet />
             </Sheet>
+            {isAdmin && (
+              <>
+                <div className="my-2 h-px bg-warm-700/50" />
+                <p className="px-4 text-xs font-semibold uppercase tracking-wider text-amber-400">
+                  Admin
+                </p>
+                <SheetClose asChild>
+                  <Link href="/admin">
+                    <NavButton
+                      className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
+                      variant="ghost"
+                      size="default"
+                    >
+                      Dashboard
+                    </NavButton>
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link href="/api-docs" target="_blank">
+                    <NavButton
+                      className="text-base text-left justify-start text-warm-100 hover:text-warm-300"
+                      variant="ghost"
+                      size="default"
+                    >
+                      API Docs
+                    </NavButton>
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <NavButton
+                    className="text-base text-left justify-start text-red-400 hover:text-red-300"
+                    variant="ghost"
+                    size="default"
+                    onClick={() => void signOut({ callbackUrl: "/" })}
+                  >
+                    Logout
+                  </NavButton>
+                </SheetClose>
+              </>
+            )}
           </div>
         </SheetContent>
       </Sheet>

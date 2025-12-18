@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { BlogPostMetadata } from "@utils/blog";
+import type { BlogPostMetadata, BlogTag } from "@utils/blog";
 import { motion } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface BlogIndexClientProps {
   posts: BlogPostMetadata[];
-  tags: string[];
+  tags: BlogTag[];
 }
 
 const containerVariants = {
@@ -51,7 +52,7 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
   const filteredPosts = useMemo(() => {
     if (!selectedTag) return posts;
     return posts.filter((post) =>
-      post.tags.map((t) => t.toLowerCase()).includes(selectedTag.toLowerCase())
+      post.tags.some((t) => t.slug === selectedTag)
     );
   }, [posts, selectedTag]);
 
@@ -103,16 +104,16 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
           </motion.button>
           {tags.map((tag) => (
             <motion.button
-              key={tag}
+              key={tag.id}
               variants={tagVariants}
-              onClick={() => setSelectedTag(tag)}
+              onClick={() => setSelectedTag(tag.slug)}
               className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-300 sm:px-4 sm:py-2 sm:text-base ${
-                selectedTag === tag
+                selectedTag === tag.slug
                   ? "bg-warm-400 text-warm-950 shadow-lg shadow-warm-400/30"
                   : "border border-warm-600 text-warm-300 hover:border-warm-400 hover:text-warm-200"
               }`}
             >
-              {tag}
+              {tag.name}
             </motion.button>
           ))}
         </motion.div>
@@ -131,33 +132,53 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
               key={post.slug}
               variants={itemVariants}
               whileHover={{ x: 4 }}
-              className="group relative overflow-hidden rounded-xl border border-warm-700/30 bg-warm-800/50 p-5 transition-all duration-300 hover:border-warm-500/50 hover:bg-warm-800/70 sm:rounded-2xl sm:p-6"
+              className="group relative overflow-hidden rounded-xl border border-warm-700/30 bg-warm-800/50 transition-all duration-300 hover:border-warm-500/50 hover:bg-warm-800/70 sm:rounded-2xl"
             >
               <Link href={`/blog/${post.slug}`} className="relative block">
-                <div className="mb-2 flex items-start justify-between sm:mb-3">
-                  <h2 className="flex-1 text-lg font-semibold text-warm-100 transition-colors duration-300 group-hover:text-warm-50 sm:text-xl md:text-2xl">
-                    {post.title}
-                  </h2>
-                </div>
+                {/* Featured Image */}
+                {post.featuredImage && (
+                  <div className="relative aspect-[2.5/1] w-full overflow-hidden">
+                    <Image
+                      src={post.featuredImage}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 768px, 896px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-warm-900/80 to-transparent" />
+                  </div>
+                )}
 
-                <p className="mb-3 text-sm text-warm-300 sm:mb-4 sm:text-base">{post.description}</p>
+                <div className={`p-5 sm:p-6 ${post.featuredImage ? "-mt-12 relative z-10" : ""}`}>
+                  <div className="mb-2 flex items-start justify-between sm:mb-3">
+                    <h2 className="flex-1 text-lg font-semibold text-warm-100 transition-colors duration-300 group-hover:text-warm-50 sm:text-xl md:text-2xl">
+                      {post.title}
+                    </h2>
+                  </div>
 
-                <div className="mb-3 flex flex-wrap gap-1.5 sm:mb-4 sm:gap-2">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-block rounded-full bg-warm-700/50 px-2.5 py-1 text-xs font-medium text-warm-200 transition-colors duration-300 group-hover:bg-warm-600/50 sm:px-3 sm:text-sm"
-                    >
-                      #{tag}
+                  <p className="mb-3 text-sm text-warm-300 sm:mb-4 sm:text-base">
+                    {post.excerpt || post.description}
+                  </p>
+
+                  {post.tags.length > 0 && (
+                    <div className="mb-3 flex flex-wrap gap-1.5 sm:mb-4 sm:gap-2">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag.id}
+                          className="inline-block rounded-full bg-warm-700/50 px-2.5 py-1 text-xs font-medium text-warm-200 transition-colors duration-300 group-hover:bg-warm-600/50 sm:px-3 sm:text-sm"
+                        >
+                          #{tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-xs text-warm-400 sm:text-sm">
+                    <time dateTime={post.date}>{formatDate(post.date)}</time>
+                    <span className="text-warm-400 transition-colors duration-300 group-hover:text-warm-300">
+                      Read more →
                     </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-warm-400 sm:text-sm">
-                  <time dateTime={post.date}>{formatDate(post.date)}</time>
-                  <span className="text-warm-400 transition-colors duration-300 group-hover:text-warm-300">
-                    Read more →
-                  </span>
+                  </div>
                 </div>
               </Link>
             </motion.article>

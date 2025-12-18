@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import type { BlogPost } from "@utils/blog";
 
 interface BlogPostClientProps {
@@ -71,11 +72,31 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
         </Link>
       </motion.div>
 
+      {/* Featured Image */}
+      {post.featuredImage && (
+        <motion.div
+          className="relative aspect-[2.5/1] w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <Image
+            src={post.featuredImage}
+            alt={post.title}
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-warm-950 via-warm-950/40 to-transparent" />
+        </motion.div>
+      )}
+
       {/* Article Container */}
-      <article className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <article className={`mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 ${post.featuredImage ? "-mt-24 relative z-10 pt-0" : "py-12 sm:py-16 md:py-20"}`}>
         {/* Header */}
         <motion.div
-          className="mb-8 sm:mb-12"
+          className={`mb-8 sm:mb-12 ${post.featuredImage ? "pt-8" : ""}`}
           variants={itemVariants}
           initial="hidden"
           animate="visible"
@@ -95,10 +116,10 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {post.tags.map((tag) => (
                   <span
-                    key={tag}
+                    key={tag.id}
                     className="rounded-full bg-warm-800 px-2.5 py-1 text-xs font-medium text-warm-300 sm:px-3"
                   >
-                    #{tag}
+                    #{tag.name}
                   </span>
                 ))}
               </div>

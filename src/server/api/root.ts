@@ -3,6 +3,8 @@ import { exampleRouter } from "./routers/example";
 import { contactRouter } from "./routers/contact";
 import { adminBlogRouter } from "./routers/adminBlog";
 import { blogRouter } from "./routers/blog";
+import { tagRouter } from "./routers/tag";
+import { apiKeyRouter } from "./routers/apiKey";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +16,8 @@ export const appRouter = createTRPCRouter({
   contact: contactRouter,
   adminBlog: adminBlogRouter,
   blog: blogRouter,
+  tag: tagRouter,
+  apiKey: apiKeyRouter,
 });
 
 // export type definition of API

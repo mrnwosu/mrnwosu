@@ -51,6 +51,7 @@ model User {
     isAdmin       Boolean   @default(false)
     accounts      Account[]
     sessions      Session[]
+    apiKeys       ApiKey[]
 }
 
 model VerificationToken {
@@ -72,16 +73,42 @@ model ContactSubmission {
 }
 
 model BlogPost {
-    id          String   @id @default(cuid())
-    title       String
-    slug        String   @unique
-    description String   @db.Text
-    content     String   @db.Text
-    tags        String   @default("")
-    published   Boolean  @default(false)
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    id            String   @id @default(cuid())
+    title         String
+    slug          String   @unique
+    description   String   @db.Text
+    excerpt       String?  @db.Text
+    content       String   @db.Text
+    featuredImage String?
+    published     Boolean  @default(false)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    tags          Tag[]    @relation("BlogPostTags")
 
     @@index([published, createdAt])
     @@index([createdAt])
+}
+
+model Tag {
+    id        String     @id @default(cuid())
+    name      String     @unique
+    slug      String     @unique
+    createdAt DateTime   @default(now())
+    posts     BlogPost[] @relation("BlogPostTags")
+
+    @@index([slug])
+}
+
+model ApiKey {
+    id          String    @id @default(cuid())
+    name        String    @default("Default API Key")
+    hashedKey   String    @unique
+    prefix      String
+    lastUsedAt  DateTime?
+    createdAt   DateTime  @default(now())
+    createdById String
+    createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+    @@index([hashedKey])
+    @@index([prefix])
 }

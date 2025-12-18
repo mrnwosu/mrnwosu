@@ -1,0 +1,242 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Mr. Nwosu Blog API",
+    "description": "API for programmatically creating blog posts. Requires an API key generated from the admin dashboard.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Mr. Nwosu"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Current server"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/blog": {
+      "post": {
+        "summary": "Create a new blog post",
+        "description": "Creates a new blog post. The post will be published immediately unless `draft: true` is specified. Tags are created automatically if they don't exist.",
+        "operationId": "createBlogPost",
+        "tags": ["Blog"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlogPost"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic post",
+                  "value": {
+                    "title": "My First Post",
+                    "content": "# Hello World\n\nThis is my first blog post written in **markdown**."
+                  }
+                },
+                "full": {
+                  "summary": "Full post with all options",
+                  "value": {
+                    "title": "Complete Example Post",
+                    "content": "# Introduction\n\nThis post demonstrates all available options.\n\n## Code Example\n\n```javascript\nconsole.log('Hello!');\n```\n\n## Conclusion\n\nThanks for reading!",
+                    "tags": ["tutorial", "javascript"],
+                    "featuredImage": "https://example.com/image.jpg",
+                    "draft": false
+                  }
+                },
+                "draft": {
+                  "summary": "Save as draft",
+                  "value": {
+                    "title": "Work in Progress",
+                    "content": "This is a draft post that won't be published yet.",
+                    "draft": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Blog post created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogPostResponse"
+                },
+                "example": {
+                  "id": "clxyz123abc",
+                  "slug": "my-first-post",
+                  "title": "My First Post",
+                  "published": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "example": {
+                  "error": "Validation failed",
+                  "details": {
+                    "fieldErrors": {
+                      "title": ["Title is required"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid API key"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API key generated from the admin dashboard. Format: `mrnw_xxxxx...`"
+      }
+    },
+    "schemas": {
+      "CreateBlogPost": {
+        "type": "object",
+        "required": ["title", "content"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The title of the blog post. A URL-friendly slug will be auto-generated from this.",
+            "example": "My Awesome Blog Post"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The blog post content in Markdown format. Supports headings, code blocks, lists, links, images, and more.",
+            "example": "# Introduction\n\nThis is my post content in **markdown**."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tag names. Tags will be created automatically if they don't exist.",
+            "example": ["tech", "tutorial"]
+          },
+          "featuredImage": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to a featured image for the post.",
+            "example": "https://example.com/image.jpg"
+          },
+          "draft": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, the post will be saved as a draft and not published. Default is false (published immediately)."
+          }
+        }
+      },
+      "BlogPostResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the blog post",
+            "example": "clxyz123abc"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly slug generated from the title",
+            "example": "my-awesome-blog-post"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the blog post",
+            "example": "My Awesome Blog Post"
+          },
+          "published": {
+            "type": "boolean",
+            "description": "Whether the post is published or a draft",
+            "example": true
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Validation failed"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "fieldErrors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

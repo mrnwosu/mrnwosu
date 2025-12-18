@@ -15,6 +15,8 @@ const server = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   // CSV of email addresses allowed to access admin (e.g., "you@gmail.com,other@gmail.com")
   ADMIN_EMAILS: z.string().min(1),
+  // Vercel Blob (optional - needed for image uploads)
+  MRNWOSU_READ_WRITE_TOKEN: z.string().optional(),
 });
 
 /**
@@ -38,6 +40,7 @@ const processEnv = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   ADMIN_EMAILS: process.env.ADMIN_EMAILS,
+  MRNWOSU_READ_WRITE_TOKEN: process.env.MRNWOSU_READ_WRITE_TOKEN,
 };
 
 // Don't touch the part below
