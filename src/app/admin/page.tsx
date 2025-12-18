@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth";
 import Link from "next/link";
-import { authOptions } from "@server/auth";
+import { auth } from "@server/auth";
 
 export default async function AdminDashboard() {
   // Server-side session is guaranteed by layout.tsx
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   return (
     <main className="min-h-screen bg-warm-950 py-16 px-4 sm:py-24 md:px-8 md:py-32">

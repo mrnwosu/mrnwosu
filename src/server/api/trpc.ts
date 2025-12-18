@@ -17,8 +17,7 @@
  */
 import { type FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { type Session } from "next-auth";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth";
+import { auth } from "../auth";
 
 import { prisma } from "../db";
 
@@ -50,8 +49,8 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (_opts: FetchCreateContextFnOptions) => {
-  // Get the session from the server using getServerSession
-  const session = await getServerSession(authOptions);
+  // Get the session from the server using auth()
+  const session = await auth();
 
   return createInnerTRPCContext({
     session,

@@ -1,80 +1,98 @@
-import type { GetServerSidePropsContext } from "next";
-import {
-  getServerSession,
-  type NextAuthOptions,
-  type DefaultSession,
-} from "next-auth";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./db";
 
 /**
- * Module augmentation for `next-auth` types.
- * Allows us to add custom properties to the `session` object and keep type
- * safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- **/
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      isAdmin: boolean;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
-  }
-
-  interface User {
-    isAdmin: boolean;
-    // ...other properties
-    // role: UserRole;
-  }
+ * Parse the ADMIN_EMAILS environment variable (CSV of allowed emails)
+ */
+function getAdminEmails(): string[] {
+  const adminEmails = process.env.ADMIN_EMAILS ?? "";
+  return adminEmails
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter((email) => email.length > 0);
 }
 
 /**
- * Options for NextAuth.js used to configure adapters, providers, callbacks,
- * etc.
- *
- * @see https://next-auth.js.org/configuration/options
- **/
-export const authOptions: NextAuthOptions = {
+ * Check if an email is in the admin whitelist
+ */
+function isAdminEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const adminEmails = getAdminEmails();
+  return adminEmails.includes(email.toLowerCase());
+}
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+    }),
+  ],
   callbacks: {
+    /**
+     * Control who can sign in - only allow whitelisted emails
+     */
+    signIn({ user }) {
+      const allowed = isAdminEmail(user.email);
+      if (!allowed) {
+        // Returning false blocks the sign-in
+        return false;
+      }
+      return true;
+    },
+    /**
+     * Add isAdmin to the session
+     */
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        session.user.isAdmin = user.isAdmin;
-        // session.user.role = user.role; <-- put other properties on the session here
+        // User is admin if their email is in the whitelist
+        session.user.isAdmin = isAdminEmail(session.user.email);
       }
       return session;
     },
   },
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
-    // }),
+  events: {
     /**
-     * ...add more providers here
-     *
-     * Most other providers require a bit more work than the Discord provider.
-     * For example, the GitHub provider requires you to add the
-     * `refresh_token_expires_in` field to the Account model. Refer to the
-     * NextAuth.js docs for the provider you want to use. Example:
-     * @see https://next-auth.js.org/providers/github
-     **/
-  ],
-};
+     * When a user is created, set isAdmin based on email whitelist
+     */
+    async createUser({ user }) {
+      if (isAdminEmail(user.email)) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { isAdmin: true },
+        });
+      }
+    },
+  },
+  pages: {
+    signIn: "/auth/signin",
+    error: "/auth/error",
+  },
+});
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the
- * `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- **/
-export const getServerAuthSession = (ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
-};
+// Type augmentation for next-auth
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      isAdmin: boolean;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+  }
+
+  interface User {
+    isAdmin?: boolean;
+  }
+}
+
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    isAdmin?: boolean;
+  }
+}
