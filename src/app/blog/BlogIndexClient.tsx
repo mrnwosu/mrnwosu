@@ -7,6 +7,36 @@ import Link from "next/link";
 import Image from "next/image";
 import TagFilter from "@components/TagFilter";
 
+function BlogPostSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-xl border border-warm-700/30 bg-warm-800/50 sm:rounded-2xl animate-pulse">
+      {/* Featured Image Skeleton */}
+      <div className="relative aspect-[2.5/1] w-full bg-warm-700/30" />
+      <div className="p-5 sm:p-6 -mt-12 relative z-10">
+        {/* Title */}
+        <div className="mb-2 sm:mb-3">
+          <div className="h-6 w-3/4 rounded bg-warm-700/50 sm:h-7" />
+        </div>
+        {/* Excerpt */}
+        <div className="mb-3 space-y-2 sm:mb-4">
+          <div className="h-4 w-full rounded bg-warm-700/40" />
+          <div className="h-4 w-5/6 rounded bg-warm-700/40" />
+        </div>
+        {/* Tags */}
+        <div className="mb-3 flex gap-1.5 sm:mb-4 sm:gap-2">
+          <div className="h-6 w-16 rounded-full bg-warm-700/50 sm:h-7 sm:w-20" />
+          <div className="h-6 w-20 rounded-full bg-warm-700/50 sm:h-7 sm:w-24" />
+        </div>
+        {/* Date and Read more */}
+        <div className="flex items-center justify-between">
+          <div className="h-4 w-28 rounded bg-warm-700/40" />
+          <div className="h-4 w-20 rounded bg-warm-700/40" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface BlogIndexClientProps {
   posts: BlogPostMetadata[];
   tags: BlogTag[];
@@ -37,6 +67,7 @@ const itemVariants = {
 
 export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const filteredPosts = useMemo(() => {
     if (selectedTags.length === 0) return posts;
@@ -44,6 +75,15 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
       selectedTags.some((slug) => post.tags.some((t) => t.slug === slug))
     );
   }, [posts, selectedTags]);
+
+  const handleTagsChange = (newTags: string[]) => {
+    setIsLoading(true);
+    // Brief delay to show skeleton, then update filter
+    setTimeout(() => {
+      setSelectedTags(newTags);
+      setIsLoading(false);
+    }, 300);
+  };
 
   // Calculate post counts per tag
   const postCounts = useMemo(() => {
@@ -88,7 +128,7 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
         <TagFilter
           tags={tags}
           selectedTags={selectedTags}
-          onTagsChange={setSelectedTags}
+          onTagsChange={handleTagsChange}
           postCounts={postCounts}
         />
       )}
@@ -100,7 +140,14 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
         initial="hidden"
         animate="visible"
       >
-        {filteredPosts.length > 0 ? (
+        {isLoading ? (
+          // Show skeletons while filtering
+          <>
+            <BlogPostSkeleton />
+            <BlogPostSkeleton />
+            <BlogPostSkeleton />
+          </>
+        ) : filteredPosts.length > 0 ? (
           filteredPosts.map((post) => (
             <motion.article
               key={post.slug}

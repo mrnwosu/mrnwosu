@@ -30,6 +30,7 @@ export default function TagFilter({
     } else {
       onTagsChange([...selectedTags, slug]);
     }
+    setOpen(false);
   };
 
   const handleClearAll = () => {
