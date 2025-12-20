@@ -138,6 +138,148 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Update an existing blog post",
+        "description": "Updates an existing blog post identified by its slug. Only include fields you want to update - omitted fields remain unchanged. Tags are replaced entirely if provided.",
+        "operationId": "updateBlogPost",
+        "tags": ["Blog"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlogPost"
+              },
+              "examples": {
+                "updateTitle": {
+                  "summary": "Update title only",
+                  "value": {
+                    "slug": "my-first-post",
+                    "title": "My Updated Post Title"
+                  }
+                },
+                "updateContent": {
+                  "summary": "Update content",
+                  "value": {
+                    "slug": "my-first-post",
+                    "content": "# Updated Content\n\nThis is the new content for my blog post."
+                  }
+                },
+                "updateTags": {
+                  "summary": "Replace tags",
+                  "value": {
+                    "slug": "my-first-post",
+                    "tags": ["updated", "new-tag"]
+                  }
+                },
+                "publishDraft": {
+                  "summary": "Publish a draft",
+                  "value": {
+                    "slug": "my-draft-post",
+                    "draft": false
+                  }
+                },
+                "fullUpdate": {
+                  "summary": "Update multiple fields",
+                  "value": {
+                    "slug": "my-first-post",
+                    "title": "Completely Revised Post",
+                    "content": "# New Content\n\nCompletely rewritten.",
+                    "tags": ["revised", "updated"],
+                    "featuredImage": "https://example.com/new-image.jpg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Blog post updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogPostResponse"
+                },
+                "example": {
+                  "success": true,
+                  "post": {
+                    "id": "clxyz123abc",
+                    "slug": "my-first-post",
+                    "title": "My Updated Post Title",
+                    "published": true,
+                    "scheduledAt": null,
+                    "createdAt": "2024-12-20T10:00:00.000Z",
+                    "tags": ["updated", "new-tag"]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "example": {
+                  "error": "Validation failed",
+                  "details": {
+                    "fieldErrors": {
+                      "slug": ["Slug is required to identify the post"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid API key"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Blog post not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Internal server error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -196,6 +338,67 @@
             "type": "string",
             "format": "date-time",
             "description": "Schedule the post to publish at a future date/time (ISO 8601). Posts are auto-published at 8 AM EST daily. If set to a future date, the post is saved as scheduled (not published until cron runs).",
+            "example": "2025-01-15T13:00:00Z"
+          }
+        }
+      },
+      "UpdateBlogPost": {
+        "type": "object",
+        "required": ["slug"],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The slug of the blog post to update. This identifies which post to modify.",
+            "example": "my-first-post"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "New title for the blog post.",
+            "example": "My Updated Blog Post"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "description": "New content for the blog post in Markdown format.",
+            "example": "# Updated Content\n\nThis is the new content."
+          },
+          "description": {
+            "type": "string",
+            "description": "New description/subtitle for the blog post.",
+            "example": "A revised description"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "New array of tag names. Replaces all existing tags. Tags are created automatically if they don't exist.",
+            "example": ["updated", "revised"]
+          },
+          "featuredImage": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to a new featured image. Set to null to remove the current image.",
+            "example": "https://example.com/new-image.jpg"
+          },
+          "draft": {
+            "type": "boolean",
+            "description": "Set to true to unpublish (convert to draft), or false to publish."
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Update the publish date in ISO 8601 format.",
+            "example": "2024-12-25T10:30:00Z"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Schedule the post for future publication (ISO 8601). Set to null to clear the schedule.",
             "example": "2025-01-15T13:00:00Z"
           }
         }
