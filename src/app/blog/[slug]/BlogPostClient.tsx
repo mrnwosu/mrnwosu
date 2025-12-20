@@ -93,7 +93,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
       )}
 
       {/* Article Container */}
-      <article className={`mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 ${post.featuredImage ? "-mt-24 relative z-10 pt-0" : "py-12 sm:py-16 md:py-20"}`}>
+      <article className={`mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 ${post.featuredImage ? "-mt-24 relative z-10 pt-0" : "py-12 sm:py-16 md:py-20"}`}>
         {/* Header */}
         <motion.div
           className={`mb-8 sm:mb-12 ${post.featuredImage ? "pt-8" : ""}`}

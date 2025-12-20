@@ -94,7 +94,7 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
 
       {/* Blog Posts Grid */}
       <motion.div
-        className="mx-auto max-w-4xl space-y-4 sm:space-y-6"
+        className="mx-auto max-w-5xl space-y-4 sm:space-y-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
