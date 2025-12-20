@@ -4,7 +4,8 @@ import { useState, useMemo } from "react";
 import type { BlogPostMetadata, BlogTag } from "@utils/blog";
 import { motion } from "motion/react";
 import Link from "next/link";
-import Image from "next/imageimport TagFilter from "@components/TagFilter";
+import Image from "next/image";
+import TagFilter from "@components/TagFilter";
 
 interface BlogIndexClientProps {
   posts: BlogPostMetadata[];
