@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import type { BlogPostMetadata, BlogTag } from "@utils/blog";
 import { motion } from "motion/react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "next/imageimport TagFilter from "@components/TagFilter";
 
 interface BlogIndexClientProps {
   posts: BlogPostMetadata[];
@@ -34,27 +34,26 @@ const itemVariants = {
   },
 };
 
-const tagVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut" as const,
-    },
-  },
-};
-
 export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const filteredPosts = useMemo(() => {
-    if (!selectedTag) return posts;
+    if (selectedTags.length === 0) return posts;
     return posts.filter((post) =>
-      post.tags.some((t) => t.slug === selectedTag)
+      selectedTags.some((slug) => post.tags.some((t) => t.slug === slug))
     );
-  }, [posts, selectedTag]);
+  }, [posts, selectedTags]);
+
+  // Calculate post counts per tag
+  const postCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    posts.forEach((post) => {
+      post.tags.forEach((tag) => {
+        counts[tag.slug] = (counts[tag.slug] || 0) + 1;
+      });
+    });
+    return counts;
+  }, [posts]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -85,38 +84,12 @@ export default function BlogIndexClient({ posts, tags }: BlogIndexClientProps) {
 
       {/* Tags Filter */}
       {tags.length > 0 && (
-        <motion.div
-          className="mb-8 flex flex-wrap justify-center gap-2 sm:mb-12 sm:gap-3"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.button
-            variants={tagVariants}
-            onClick={() => setSelectedTag(null)}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-300 sm:px-4 sm:py-2 sm:text-base ${
-              selectedTag === null
-                ? "bg-warm-500 text-warm-950 shadow-lg shadow-warm-500/30"
-                : "border border-warm-600 text-warm-300 hover:border-warm-400 hover:text-warm-200"
-            }`}
-          >
-            All
-          </motion.button>
-          {tags.map((tag) => (
-            <motion.button
-              key={tag.id}
-              variants={tagVariants}
-              onClick={() => setSelectedTag(tag.slug)}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-300 sm:px-4 sm:py-2 sm:text-base ${
-                selectedTag === tag.slug
-                  ? "bg-warm-400 text-warm-950 shadow-lg shadow-warm-400/30"
-                  : "border border-warm-600 text-warm-300 hover:border-warm-400 hover:text-warm-200"
-              }`}
-            >
-              {tag.name}
-            </motion.button>
-          ))}
-        </motion.div>
+        <TagFilter
+          tags={tags}
+          selectedTags={selectedTags}
+          onTagsChange={setSelectedTags}
+          postCounts={postCounts}
+        />
       )}
 
       {/* Blog Posts Grid */}

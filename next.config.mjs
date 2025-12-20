@@ -10,6 +10,15 @@
 const config = {
   reactStrictMode: true,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
+
   // i18n is not compatible with App Router
   // App Router has built-in internationalization support
   // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization
