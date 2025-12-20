@@ -8,8 +8,9 @@ import { revalidateBlog } from "@utils/revalidate";
 
 export default function AdminBlogPage() {
   const router = useRouter();
-  const [filter, setFilter] = useState<"all" | "published" | "drafts">("all");
+  const [filter, setFilter] = useState<"all" | "published" | "scheduled" | "drafts">("all");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [publishingId, setPublishingId] = useState<string | null>(null);
 
   const utils = api.useUtils();
   const { data: posts, isLoading } = api.adminBlog.getAll.useQuery();
@@ -20,6 +21,15 @@ export default function AdminBlogPage() {
       void utils.adminBlog.getAll.invalidate();
       void utils.adminBlog.getStats.invalidate();
       void revalidateBlog();
+    },
+  });
+
+  const publishNowMutation = api.adminBlog.publishNow.useMutation({
+    onSuccess: (data) => {
+      setPublishingId(null);
+      void utils.adminBlog.getAll.invalidate();
+      void utils.adminBlog.getStats.invalidate();
+      void revalidateBlog(data.slug);
     },
   });
 
@@ -34,9 +44,17 @@ export default function AdminBlogPage() {
     }
   };
 
+  const handlePublishNow = (id: string) => {
+    if (confirm("Publish this post now? The publish date will be set to today.")) {
+      setPublishingId(id);
+      publishNowMutation.mutate({ id });
+    }
+  };
+
   const filteredPosts = posts?.filter((post) => {
     if (filter === "published") return post.published;
-    if (filter === "drafts") return !post.published;
+    if (filter === "scheduled") return !post.published && post.scheduledAt;
+    if (filter === "drafts") return !post.published && !post.scheduledAt;
     return true;
   });
 
@@ -82,18 +100,31 @@ export default function AdminBlogPage() {
         </div>
 
         {/* Filter */}
-        <div className="mb-6 flex gap-2">
-          {(["all", "published", "drafts"] as const).map((f) => (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {(["all", "published", "scheduled", "drafts"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 filter === f
-                  ? "bg-warm-600 text-warm-100"
+                  ? f === "scheduled"
+                    ? "bg-blue-600 text-white"
+                    : "bg-warm-600 text-warm-100"
                   : "bg-warm-800/50 text-warm-400 hover:bg-warm-700/50"
               }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
+              {f !== "all" && posts && (
+                <span className="ml-1 text-xs opacity-70">
+                  (
+                  {f === "published"
+                    ? posts.filter((p) => p.published).length
+                    : f === "scheduled"
+                    ? posts.filter((p) => !p.published && p.scheduledAt).length
+                    : posts.filter((p) => !p.published && !p.scheduledAt).length}
+                  )
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -121,16 +152,22 @@ export default function AdminBlogPage() {
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="flex-1">
-                    <div className="mb-2 flex items-center gap-3">
+                    <div className="mb-2 flex flex-wrap items-center gap-3">
                       <h3 className="font-medium text-warm-100">{post.title}</h3>
                       <span
                         className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                           post.published
                             ? "bg-green-900/50 text-green-400"
+                            : post.scheduledAt
+                            ? "bg-blue-900/50 text-blue-400"
                             : "bg-yellow-900/50 text-yellow-400"
                         }`}
                       >
-                        {post.published ? "Published" : "Draft"}
+                        {post.published
+                          ? "Published"
+                          : post.scheduledAt
+                          ? `Scheduled: ${formatDate(new Date(post.scheduledAt))}`
+                          : "Draft"}
                       </span>
                     </div>
                     {post.excerpt && (
@@ -153,6 +190,23 @@ export default function AdminBlogPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    {/* Publish Now - only for scheduled posts */}
+                    {!post.published && post.scheduledAt && (
+                      <button
+                        onClick={() => handlePublishNow(post.id)}
+                        disabled={publishingId === post.id}
+                        className="rounded-lg p-2 text-blue-400 transition-colors hover:bg-blue-900/30 hover:text-blue-300 disabled:opacity-50"
+                        title="Publish Now"
+                      >
+                        {publishingId === post.id ? (
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                        ) : (
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
                     <button
                       onClick={() => router.push(`/admin/blog/${post.id}`)}
                       className="rounded-lg p-2 text-warm-400 transition-colors hover:bg-warm-700/50 hover:text-warm-300"

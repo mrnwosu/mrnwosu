@@ -32,9 +32,12 @@ const blogFormSchema = z.object({
   featuredImage: z.union([z.string(), z.null()]).optional().transform((val) => val || null),
   tagIds: z.array(z.string()),
   publishDate: z.date().optional(),
+  scheduledAt: z.date().optional(),
 });
 
 type BlogFormData = z.infer<typeof blogFormSchema>;
+
+type ActionType = "draft" | "schedule" | "publish";
 
 interface BlogEditorProps {
   mode: "create" | "edit";
@@ -48,12 +51,13 @@ interface BlogEditorProps {
     tagIds: string[];
     published: boolean;
     createdAt?: Date;
+    scheduledAt?: Date | null;
   };
 }
 
 export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
   const router = useRouter();
-  const [isPublishing, setIsPublishing] = useState(false);
+  const [actionType, setActionType] = useState<ActionType>("draft");
   const [pendingTags, setPendingTags] = useState<PendingTag[]>([]);
 
   const utils = api.useUtils();
@@ -68,6 +72,7 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
       featuredImage: initialData?.featuredImage ?? null,
       tagIds: initialData?.tagIds ?? [],
       publishDate: initialData?.createdAt ? new Date(initialData.createdAt) : undefined,
+      scheduledAt: initialData?.scheduledAt ? new Date(initialData.scheduledAt) : undefined,
     },
   });
 
@@ -102,8 +107,8 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
     [mode, form]
   );
 
-  const onSubmit = (data: BlogFormData, published: boolean) => {
-    setIsPublishing(published);
+  const onSubmit = (data: BlogFormData, action: ActionType) => {
+    setActionType(action);
 
     // Convert Date to ISO string if provided
     const createdAt = data.publishDate
@@ -118,6 +123,22 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
       .filter((t) => data.tagIds.includes(t.tempId))
       .map((t) => t.name);
 
+    // Determine published state and scheduledAt based on action
+    let published = false;
+    let scheduledAt: string | null = null;
+
+    if (action === "publish") {
+      published = true;
+      scheduledAt = null; // Clear any schedule
+    } else if (action === "schedule" && data.scheduledAt) {
+      published = false;
+      scheduledAt = data.scheduledAt.toISOString();
+    } else {
+      // draft
+      published = false;
+      scheduledAt = null;
+    }
+
     if (mode === "create") {
       createMutation.mutate({
         title: data.title,
@@ -129,6 +150,7 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
         newTagNames,
         published,
         createdAt,
+        scheduledAt,
       });
     } else if (postId) {
       updateMutation.mutate({
@@ -142,13 +164,18 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
         newTagNames,
         published,
         createdAt,
+        scheduledAt,
       });
     }
   };
 
-  const handlePublish = (published: boolean) => {
-    void form.handleSubmit((data) => onSubmit(data, published))();
+  const handleAction = (action: ActionType) => {
+    void form.handleSubmit((data) => onSubmit(data, action))();
   };
+
+  // Watch scheduledAt to determine if we can show the Schedule button
+  const scheduledAt = form.watch("scheduledAt");
+  const isScheduleValid = scheduledAt && scheduledAt > new Date();
 
   return (
     <Form {...form}>
@@ -177,7 +204,11 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
                 />
               </svg>
               <p className="text-sm font-medium text-warm-200">
-                {isPublishing ? "Publishing post..." : "Saving draft..."}
+                {actionType === "publish"
+                  ? "Publishing post..."
+                  : actionType === "schedule"
+                  ? "Scheduling post..."
+                  : "Saving draft..."}
               </p>
             </div>
           </div>
@@ -260,7 +291,7 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
           )}
         />
 
-        {/* Tags and Publish Date - Side by Side */}
+        {/* Tags and Schedule - Side by Side */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Tags */}
           <FormField
@@ -280,26 +311,48 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
             )}
           />
 
-          {/* Publish Date */}
+          {/* Schedule For */}
           <FormField
             control={form.control}
-            name="publishDate"
+            name="scheduledAt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-warm-200">Publish Date (optional)</FormLabel>
+                <FormLabel className="text-warm-200">Schedule For (optional)</FormLabel>
                 <DateTimePicker
                   value={field.value}
                   onChange={field.onChange}
                   placeholder="Select date and time"
                 />
                 <FormDescription className="text-warm-500">
-                  Leave empty to use current date/time
+                  Published at 8 AM EST on/after this date
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+
+        {/* Custom Publish Date (advanced, only show when not scheduling) */}
+        {!isScheduleValid && (
+          <FormField
+            control={form.control}
+            name="publishDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-warm-200">Custom Publish Date (optional)</FormLabel>
+                <DateTimePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Select date and time"
+                />
+                <FormDescription className="text-warm-500">
+                  Override the post date for display purposes
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {/* Content */}
         <FormField
@@ -320,22 +373,44 @@ export function BlogEditor({ mode, postId, initialData }: BlogEditorProps) {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-3 border-t border-warm-700/30 pt-6">
+          {/* Save as Draft */}
           <button
             type="button"
-            onClick={() => handlePublish(false)}
+            onClick={() => handleAction("draft")}
             disabled={mutation.isPending}
             className="rounded-lg border border-warm-600 px-6 py-2 text-sm font-medium text-warm-300 transition-colors hover:bg-warm-700 disabled:opacity-50"
           >
-            {mutation.isPending && !isPublishing ? "Saving..." : "Save as Draft"}
+            {mutation.isPending && actionType === "draft" ? "Saving..." : "Save as Draft"}
           </button>
+
+          {/* Schedule - only show if scheduledAt is set and in future */}
+          {isScheduleValid && (
+            <button
+              type="button"
+              onClick={() => handleAction("schedule")}
+              disabled={mutation.isPending}
+              className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50"
+            >
+              {mutation.isPending && actionType === "schedule"
+                ? "Scheduling..."
+                : `Schedule for ${scheduledAt.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}`}
+            </button>
+          )}
+
+          {/* Publish Now */}
           <button
             type="button"
-            onClick={() => handlePublish(true)}
+            onClick={() => handleAction("publish")}
             disabled={mutation.isPending}
             className="rounded-lg bg-warm-600 px-6 py-2 text-sm font-medium text-warm-100 transition-colors hover:bg-warm-500 disabled:opacity-50"
           >
-            {mutation.isPending && isPublishing ? "Publishing..." : "Publish"}
+            {mutation.isPending && actionType === "publish" ? "Publishing..." : "Publish Now"}
           </button>
+
           <button
             type="button"
             onClick={() => router.push("/admin/blog")}

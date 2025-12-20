@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Mr. Nwosu Blog API",
-    "description": "API for programmatically creating blog posts. Requires an API key generated from the admin dashboard.",
+    "description": "API for programmatically creating blog posts. Supports scheduling posts for future publication (published daily at 8 AM EST). Requires an API key generated from the admin dashboard.",
     "version": "1.0.0",
     "contact": {
       "name": "Mr. Nwosu"
@@ -62,6 +62,14 @@
                     "title": "Work in Progress",
                     "content": "This is a draft post that won't be published yet.",
                     "draft": true
+                  }
+                },
+                "scheduled": {
+                  "summary": "Schedule for future",
+                  "value": {
+                    "title": "Future Post",
+                    "content": "# Coming Soon\n\nThis post will be published automatically on the scheduled date.",
+                    "scheduledAt": "2025-01-15T13:00:00Z"
                   }
                 }
               }
@@ -183,6 +191,12 @@
             "format": "date-time",
             "description": "Custom publish date in ISO 8601 format. If not provided, defaults to current date/time.",
             "example": "2024-12-25T10:30:00Z"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Schedule the post to publish at a future date/time (ISO 8601). Posts are auto-published at 8 AM EST daily. If set to a future date, the post is saved as scheduled (not published until cron runs).",
+            "example": "2025-01-15T13:00:00Z"
           }
         }
       },
@@ -208,6 +222,13 @@
             "type": "boolean",
             "description": "Whether the post is published or a draft",
             "example": true
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the post is scheduled to publish (null if not scheduled or already published)",
+            "example": "2025-01-15T13:00:00Z"
           }
         }
       },

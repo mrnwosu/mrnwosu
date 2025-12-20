@@ -17,7 +17,7 @@ function LoadingSpinner() {
 const PostStatsCard = memo(function PostStatsCard({
   stats,
 }: {
-  stats: { total: number; published: number; drafts: number };
+  stats: { total: number; published: number; scheduled: number; drafts: number };
 }) {
   return (
     <div className="rounded-xl border border-warm-700/30 bg-warm-800/50 p-5 sm:rounded-2xl sm:p-6">
@@ -25,17 +25,21 @@ const PostStatsCard = memo(function PostStatsCard({
         Blog Posts
       </h2>
 
-      <div className="mb-4 grid grid-cols-3 gap-4">
+      <div className="mb-4 grid grid-cols-4 gap-2 sm:gap-4">
         <div className="text-center">
-          <div className="text-2xl font-bold text-warm-100">{stats.total}</div>
+          <div className="text-xl font-bold text-warm-100 sm:text-2xl">{stats.total}</div>
           <div className="text-xs text-warm-400">Total</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-green-400">{stats.published}</div>
+          <div className="text-xl font-bold text-green-400 sm:text-2xl">{stats.published}</div>
           <div className="text-xs text-warm-400">Published</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-yellow-400">{stats.drafts}</div>
+          <div className="text-xl font-bold text-blue-400 sm:text-2xl">{stats.scheduled}</div>
+          <div className="text-xs text-warm-400">Scheduled</div>
+        </div>
+        <div className="text-center">
+          <div className="text-xl font-bold text-yellow-400 sm:text-2xl">{stats.drafts}</div>
           <div className="text-xs text-warm-400">Drafts</div>
         </div>
       </div>

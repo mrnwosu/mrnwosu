@@ -26,6 +26,7 @@ export const adminBlogRouter = createTRPCRouter({
         newTagNames: z.array(z.string()).default([]), // New tags to create
         published: z.boolean().default(false),
         createdAt: z.string().datetime().optional(), // Optional custom publish date
+        scheduledAt: z.string().datetime().optional().nullable(), // Schedule for future auto-publish
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -61,6 +62,11 @@ export const adminBlogRouter = createTRPCRouter({
         // Combine existing tag IDs with newly created tag IDs
         const allTagIds = [...input.tagIds, ...newTagIds];
 
+        // If scheduling for future, force published to false
+        const scheduledDate = input.scheduledAt ? new Date(input.scheduledAt) : null;
+        const isScheduledForFuture = scheduledDate && scheduledDate > new Date();
+        const published = isScheduledForFuture ? false : input.published;
+
         const post = await ctx.prisma.blogPost.create({
           data: {
             title: input.title,
@@ -69,7 +75,8 @@ export const adminBlogRouter = createTRPCRouter({
             content: input.content,
             excerpt,
             featuredImage: input.featuredImage,
-            published: input.published,
+            published,
+            scheduledAt: scheduledDate,
             createdAt: input.createdAt ? new Date(input.createdAt) : undefined,
             tags: {
               connect: allTagIds.map((id) => ({ id })),
@@ -145,6 +152,7 @@ export const adminBlogRouter = createTRPCRouter({
         newTagNames: z.array(z.string()).default([]), // New tags to create
         published: z.boolean().optional(),
         createdAt: z.string().datetime().optional(), // Optional custom publish date
+        scheduledAt: z.string().datetime().optional().nullable(), // Schedule for future auto-publish
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -169,6 +177,20 @@ export const adminBlogRouter = createTRPCRouter({
         if (input.featuredImage !== undefined) updateData.featuredImage = input.featuredImage;
         if (input.published !== undefined) updateData.published = input.published;
         if (input.createdAt !== undefined) updateData.createdAt = new Date(input.createdAt);
+
+        // Handle scheduledAt updates
+        if (input.scheduledAt !== undefined) {
+          if (input.scheduledAt === null) {
+            updateData.scheduledAt = null;
+          } else {
+            const scheduledDate = new Date(input.scheduledAt);
+            updateData.scheduledAt = scheduledDate;
+            // If scheduling for future, force published to false
+            if (scheduledDate > new Date()) {
+              updateData.published = false;
+            }
+          }
+        }
 
         // Handle tag updates (including new tags)
         if (input.tagIds !== undefined || input.newTagNames.length > 0) {
@@ -255,13 +277,18 @@ export const adminBlogRouter = createTRPCRouter({
     }),
 
   getStats: adminProcedure.query(async ({ ctx }) => {
-    const [total, published, drafts] = await Promise.all([
+    const [total, published, scheduled, drafts] = await Promise.all([
       ctx.prisma.blogPost.count(),
       ctx.prisma.blogPost.count({ where: { published: true } }),
-      ctx.prisma.blogPost.count({ where: { published: false } }),
+      ctx.prisma.blogPost.count({
+        where: { published: false, scheduledAt: { not: null } },
+      }),
+      ctx.prisma.blogPost.count({
+        where: { published: false, scheduledAt: null },
+      }),
     ]);
 
-    return { total, published, drafts };
+    return { total, published, scheduled, drafts };
   }),
 
   // Combined dashboard stats - single query for all admin dashboard data
@@ -276,7 +303,12 @@ export const adminBlogRouter = createTRPCRouter({
       Promise.all([
         ctx.prisma.blogPost.count(),
         ctx.prisma.blogPost.count({ where: { published: true } }),
-        ctx.prisma.blogPost.count({ where: { published: false } }),
+        ctx.prisma.blogPost.count({
+          where: { published: false, scheduledAt: { not: null } },
+        }),
+        ctx.prisma.blogPost.count({
+          where: { published: false, scheduledAt: null },
+        }),
       ]),
       // Tags with post counts
       ctx.prisma.tag.findMany({
@@ -306,11 +338,40 @@ export const adminBlogRouter = createTRPCRouter({
       blog: {
         total: blogStats[0],
         published: blogStats[1],
-        drafts: blogStats[2],
+        scheduled: blogStats[2],
+        drafts: blogStats[3],
       },
       tags,
       contactCount,
       apiKey,
     };
   }),
+
+  // Publish a scheduled/draft post immediately (updates createdAt to now)
+  publishNow: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.prisma.blogPost.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      const updatedPost = await ctx.prisma.blogPost.update({
+        where: { id: input.id },
+        data: {
+          published: true,
+          scheduledAt: null, // Clear schedule
+          createdAt: new Date(), // Update publish date to now
+        },
+        include: { tags: true },
+      });
+
+      return updatedPost;
+    }),
 });

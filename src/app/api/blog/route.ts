@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import type { BlogPost, Tag } from "@prisma/client";
 import { prisma } from "@server/db";
 import { hashApiKey } from "@utils/apiKey";
 import { generateSlug, ensureUniqueSlug } from "@utils/slug";
@@ -14,6 +15,7 @@ const createBlogSchema = z.object({
   featuredImage: z.string().url().optional(),
   draft: z.boolean().optional().default(false),
   date: z.string().datetime().optional(), // Optional custom publish date (ISO 8601)
+  scheduledAt: z.string().datetime().optional(), // Schedule for future auto-publish
 });
 
 export async function POST(request: NextRequest) {
@@ -58,7 +60,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { title, content, description, tags, featuredImage, draft, date } = result.data;
+    const { title, content, description, tags, featuredImage, draft, date, scheduledAt } = result.data;
 
     // Generate slug
     const baseSlug = generateSlug(title);
@@ -94,8 +96,13 @@ export async function POST(request: NextRequest) {
       tagConnections = tagRecords.map((t) => ({ id: t.id }));
     }
 
+    // Determine publish state
+    const scheduledDate = scheduledAt ? new Date(scheduledAt) : null;
+    const isScheduledForFuture = scheduledDate && scheduledDate > new Date();
+    const published = isScheduledForFuture ? false : !draft;
+
     // Create blog post
-    const post = await prisma.blogPost.create({
+    const post: BlogPost & { tags: Tag[] } = await prisma.blogPost.create({
       data: {
         title,
         slug,
@@ -103,7 +110,8 @@ export async function POST(request: NextRequest) {
         content,
         excerpt,
         featuredImage,
-        published: !draft,
+        published,
+        scheduledAt: scheduledDate,
         createdAt: date ? new Date(date) : undefined,
         tags: {
           connect: tagConnections,
@@ -121,6 +129,7 @@ export async function POST(request: NextRequest) {
         slug: post.slug,
         title: post.title,
         published: post.published,
+        scheduledAt: post.scheduledAt?.toISOString() ?? null,
         createdAt: post.createdAt,
         tags: post.tags.map((t) => t.name),
       },

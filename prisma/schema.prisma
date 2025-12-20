@@ -73,20 +73,22 @@ model ContactSubmission {
 }
 
 model BlogPost {
-    id            String   @id @default(cuid())
+    id            String    @id @default(cuid())
     title         String
-    slug          String   @unique
-    description   String   @db.Text
-    excerpt       String?  @db.Text
-    content       String   @db.Text
+    slug          String    @unique
+    description   String    @db.Text
+    excerpt       String?   @db.Text
+    content       String    @db.Text
     featuredImage String?
-    published     Boolean  @default(false)
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    tags          Tag[]    @relation("BlogPostTags")
+    published     Boolean   @default(false)
+    scheduledAt   DateTime? // When to auto-publish (null = not scheduled)
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    tags          Tag[]     @relation("BlogPostTags")
 
     @@index([published, createdAt])
     @@index([createdAt])
+    @@index([scheduledAt])
 }
 
 model Tag {
