@@ -1,5 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@server/auth";
+import { env } from "../../env.mjs";
+
+const isDev = env.APP_ENV === "development";
 
 export default async function AdminLayout({
   children,
@@ -18,5 +21,14 @@ export default async function AdminLayout({
     redirect("/");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {isDev && (
+        <div className="bg-amber-600 px-4 py-1 text-center text-xs font-medium text-black">
+          DEV MODE — Uploads save locally to public/uploads
+        </div>
+      )}
+      {children}
+    </>
+  );
 }

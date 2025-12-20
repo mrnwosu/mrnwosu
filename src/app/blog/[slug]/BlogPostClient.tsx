@@ -105,15 +105,15 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
             {post.title}
           </h1>
 
-          <div className="flex flex-col gap-3 border-b border-warm-800 pb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:pb-6">
-            <div className="flex items-center gap-3 text-xs text-warm-400 sm:gap-4 sm:text-sm">
-              <time dateTime={post.date}>{formatDate(post.date)}</time>
-              <span className="text-warm-600">•</span>
-              <span>{post.readingTime} min read</span>
-            </div>
-
+          <div className="flex flex-wrap items-center gap-2 border-b border-warm-800 pb-4 sm:gap-3 sm:pb-6">
+            <time dateTime={post.date} className="text-xs text-warm-400 sm:text-sm">
+              {formatDate(post.date)}
+            </time>
+            <span className="text-warm-600">•</span>
+            <span className="text-xs text-warm-400 sm:text-sm">{post.readingTime} min read</span>
             {post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+              <>
+                <span className="text-warm-600">•</span>
                 {post.tags.map((tag) => (
                   <span
                     key={tag.id}
@@ -122,7 +122,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                     #{tag.name}
                   </span>
                 ))}
-              </div>
+              </>
             )}
           </div>
         </motion.div>

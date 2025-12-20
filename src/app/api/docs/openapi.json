@@ -177,6 +177,12 @@
             "type": "boolean",
             "default": false,
             "description": "If true, the post will be saved as a draft and not published. Default is false (published immediately)."
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Custom publish date in ISO 8601 format. If not provided, defaults to current date/time.",
+            "example": "2024-12-25T10:30:00Z"
           }
         }
       },

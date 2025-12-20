@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@utils/trpc-provider";
 import { useState } from "react";
+import { revalidateBlog } from "@utils/revalidate";
 
 export default function AdminBlogPage() {
   const router = useRouter();
@@ -18,13 +19,18 @@ export default function AdminBlogPage() {
       setDeletingId(null);
       void utils.adminBlog.getAll.invalidate();
       void utils.adminBlog.getStats.invalidate();
+      void revalidateBlog();
     },
   });
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, slug: string) => {
     if (confirm("Are you sure you want to delete this post?")) {
       setDeletingId(id);
-      deleteMutation.mutate({ id });
+      deleteMutation.mutate({ id }, {
+        onSuccess: () => {
+          void revalidateBlog(slug);
+        },
+      });
     }
   };
 
@@ -178,7 +184,7 @@ export default function AdminBlogPage() {
                       </svg>
                     </a>
                     <button
-                      onClick={() => handleDelete(post.id)}
+                      onClick={() => handleDelete(post.id, post.slug)}
                       disabled={deletingId === post.id}
                       className="rounded-lg p-2 text-warm-400 transition-colors hover:bg-red-900/30 hover:text-red-400 disabled:opacity-50"
                       title="Delete"

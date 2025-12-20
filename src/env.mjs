@@ -8,6 +8,8 @@ import { z } from "zod";
 const server = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
+  // App environment - use this for dev mode checks
+  APP_ENV: z.enum(["development", "production"]),
   // Auth.js
   AUTH_SECRET: z.string().min(1),
   // Google OAuth
@@ -25,7 +27,7 @@ const server = z.object({
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
-  // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+  NEXT_PUBLIC_APP_ENV: z.enum(["development", "production"]),
 });
 
 /**
@@ -36,11 +38,13 @@ const client = z.object({
 const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
+  APP_ENV: process.env.APP_ENV,
   AUTH_SECRET: process.env.AUTH_SECRET,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   ADMIN_EMAILS: process.env.ADMIN_EMAILS,
   MRNWOSU_READ_WRITE_TOKEN: process.env.MRNWOSU_READ_WRITE_TOKEN,
+  NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
 };
 
 // Don't touch the part below

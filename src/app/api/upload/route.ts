@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { put } from "@vercel/blob";
 import { auth } from "@server/auth";
+import { getBlobStorage } from "@utils/blobStorage";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 4 * 1024 * 1024; // 4MB
@@ -17,14 +17,6 @@ export async function POST(request: NextRequest) {
 
     if (!session.user.isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    // Check if blob token is configured
-    if (!process.env.MRNWOSU_READ_WRITE_TOKEN) {
-      return NextResponse.json(
-        { error: "Image upload not configured. MRNWOSU_READ_WRITE_TOKEN is missing." },
-        { status: 500 }
-      );
     }
 
     const formData = await request.formData();
@@ -55,14 +47,13 @@ export async function POST(request: NextRequest) {
     const extension = file.name.split(".").pop() || "jpg";
     const filename = `blog/${timestamp}.${extension}`;
 
-    // Upload to Vercel Blob
-    const blob = await put(filename, file, {
-      access: "public",
-    });
+    // Upload using the appropriate storage backend
+    const storage = getBlobStorage();
+    const result = await storage.upload(filename, file);
 
     return NextResponse.json({
-      url: blob.url,
-      filename: blob.pathname,
+      url: result.url,
+      filename: result.pathname,
     });
   } catch (error) {
     console.error("Upload error:", error);

@@ -88,6 +88,7 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
               featuredImage: post.featuredImage,
               tagIds: post.tags.map((tag) => tag.id),
               published: post.published,
+              createdAt: post.createdAt,
             }}
           />
         </div>

@@ -20,9 +20,12 @@ export const adminBlogRouter = createTRPCRouter({
         description: z.string().min(1, "Description is required"),
         content: z.string().min(1, "Content is required"),
         excerpt: z.string().optional(),
-        featuredImage: z.string().url().optional().nullable(),
+        // Accept full URLs or relative paths (for local uploads in dev)
+        featuredImage: z.string().optional().nullable(),
         tagIds: z.array(z.string()).default([]),
+        newTagNames: z.array(z.string()).default([]), // New tags to create
         published: z.boolean().default(false),
+        createdAt: z.string().datetime().optional(), // Optional custom publish date
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -34,6 +37,30 @@ export const adminBlogRouter = createTRPCRouter({
       const excerpt = input.excerpt || generateExcerpt(input.content);
 
       try {
+        // Create new tags and collect their IDs
+        const newTagIds: string[] = [];
+        if (input.newTagNames.length > 0) {
+          for (const tagName of input.newTagNames) {
+            const tagSlug = generateSlug(tagName);
+            // Check if tag already exists (by slug)
+            const existingTag = await ctx.prisma.tag.findUnique({
+              where: { slug: tagSlug },
+            });
+
+            if (existingTag) {
+              newTagIds.push(existingTag.id);
+            } else {
+              const newTag = await ctx.prisma.tag.create({
+                data: { name: tagName, slug: tagSlug },
+              });
+              newTagIds.push(newTag.id);
+            }
+          }
+        }
+
+        // Combine existing tag IDs with newly created tag IDs
+        const allTagIds = [...input.tagIds, ...newTagIds];
+
         const post = await ctx.prisma.blogPost.create({
           data: {
             title: input.title,
@@ -43,8 +70,9 @@ export const adminBlogRouter = createTRPCRouter({
             excerpt,
             featuredImage: input.featuredImage,
             published: input.published,
+            createdAt: input.createdAt ? new Date(input.createdAt) : undefined,
             tags: {
-              connect: input.tagIds.map((id) => ({ id })),
+              connect: allTagIds.map((id) => ({ id })),
             },
           },
           include: {
@@ -111,9 +139,12 @@ export const adminBlogRouter = createTRPCRouter({
         description: z.string().min(1).optional(),
         content: z.string().min(1).optional(),
         excerpt: z.string().optional().nullable(),
-        featuredImage: z.string().url().optional().nullable(),
+        // Accept full URLs or relative paths (for local uploads in dev)
+        featuredImage: z.string().optional().nullable(),
         tagIds: z.array(z.string()).optional(),
+        newTagNames: z.array(z.string()).default([]), // New tags to create
         published: z.boolean().optional(),
+        createdAt: z.string().datetime().optional(), // Optional custom publish date
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -137,11 +168,35 @@ export const adminBlogRouter = createTRPCRouter({
         if (input.excerpt !== undefined) updateData.excerpt = input.excerpt;
         if (input.featuredImage !== undefined) updateData.featuredImage = input.featuredImage;
         if (input.published !== undefined) updateData.published = input.published;
+        if (input.createdAt !== undefined) updateData.createdAt = new Date(input.createdAt);
 
-        // Handle tag updates
-        if (input.tagIds !== undefined) {
+        // Handle tag updates (including new tags)
+        if (input.tagIds !== undefined || input.newTagNames.length > 0) {
+          // Create new tags and collect their IDs
+          const newTagIds: string[] = [];
+          if (input.newTagNames.length > 0) {
+            for (const tagName of input.newTagNames) {
+              const tagSlug = generateSlug(tagName);
+              // Check if tag already exists (by slug)
+              const existingTag = await ctx.prisma.tag.findUnique({
+                where: { slug: tagSlug },
+              });
+
+              if (existingTag) {
+                newTagIds.push(existingTag.id);
+              } else {
+                const newTag = await ctx.prisma.tag.create({
+                  data: { name: tagName, slug: tagSlug },
+                });
+                newTagIds.push(newTag.id);
+              }
+            }
+          }
+
+          // Combine existing tag IDs with newly created tag IDs
+          const allTagIds = [...(input.tagIds ?? []), ...newTagIds];
           updateData.tags = {
-            set: input.tagIds.map((id) => ({ id })),
+            set: allTagIds.map((id) => ({ id })),
           };
         }
 

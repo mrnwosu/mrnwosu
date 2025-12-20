@@ -13,6 +13,7 @@ const createBlogSchema = z.object({
   tags: z.array(z.string()).optional(), // Array of tag names
   featuredImage: z.string().url().optional(),
   draft: z.boolean().optional().default(false),
+  date: z.string().datetime().optional(), // Optional custom publish date (ISO 8601)
 });
 
 export async function POST(request: NextRequest) {
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { title, content, description, tags, featuredImage, draft } = result.data;
+    const { title, content, description, tags, featuredImage, draft, date } = result.data;
 
     // Generate slug
     const baseSlug = generateSlug(title);
@@ -103,6 +104,7 @@ export async function POST(request: NextRequest) {
         excerpt,
         featuredImage,
         published: !draft,
+        createdAt: date ? new Date(date) : undefined,
         tags: {
           connect: tagConnections,
         },
