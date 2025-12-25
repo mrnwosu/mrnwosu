@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { db } from "@server/db";
+import { prisma } from "@server/db";
 import {
   getClientIp,
   getGeolocationFromIp,
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Store page view in database
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    await db.pageView.create({
+    await prisma.pageView.create({
       data: {
         pathname,
         ipHash,
