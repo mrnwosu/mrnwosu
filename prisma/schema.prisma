@@ -114,3 +114,22 @@ model ApiKey {
     @@index([hashedKey])
     @@index([prefix])
 }
+
+model PageView {
+    id          String   @id @default(cuid())
+    pathname    String   // e.g., "/blog/my-post"
+    ipHash      String   // SHA-256 hash of IP for privacy
+    country     String?  // e.g., "United States"
+    countryCode String?  // e.g., "US"
+    region      String?  // e.g., "California"
+    city        String?  // e.g., "San Francisco"
+    latitude    Float?   // For heatmap visualization
+    longitude   Float?   // For heatmap visualization
+    userAgent   String?  // Browser/device info
+    createdAt   DateTime @default(now())
+
+    @@index([createdAt])
+    @@index([pathname])
+    @@index([countryCode])
+    @@index([ipHash])
+}

@@ -5,6 +5,7 @@ import "../styles/globals.css";
 import { TRPCReactProvider } from "@utils/trpc-provider";
 import { Navigation } from "@components/Navigation";
 import { LoadingScreen } from "@components/LoadingScreen";
+import { PageTracker } from "@components/PageTracker";
 
 export const metadata: Metadata = {
   title: {
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <TRPCReactProvider>
           <Analytics />
+          <PageTracker />
           <LoadingScreen />
           <div className="min-h-screen text-white">
             <Navigation />

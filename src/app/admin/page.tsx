@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { api } from "@utils/trpc-provider";
 import { useState, memo, useCallback } from "react";
+import { AnalyticsDashboard } from "@components/admin/AnalyticsDashboard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Loading spinner component
 function LoadingSpinner() {
@@ -394,13 +396,26 @@ export default function AdminDashboard() {
             ))}
           </div>
         ) : data ? (
-          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-            <PostStatsCard stats={data.blog} />
-            <TagManagementCard initialTags={data.tags} />
-            <ContactStatsCard count={data.contactCount} />
-            <ApiKeyCard initialKey={data.apiKey} />
-            <ApiDocsCard />
-          </div>
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="mb-6 grid w-full max-w-md grid-cols-2">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="mt-0">
+              <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+                <PostStatsCard stats={data.blog} />
+                <TagManagementCard initialTags={data.tags} />
+                <ContactStatsCard count={data.contactCount} />
+                <ApiKeyCard initialKey={data.apiKey} />
+                <ApiDocsCard />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="analytics" className="mt-0">
+              <AnalyticsDashboard />
+            </TabsContent>
+          </Tabs>
         ) : null}
       </div>
     </main>
