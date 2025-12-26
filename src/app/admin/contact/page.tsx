@@ -75,14 +75,27 @@ export default function AdminContactPage() {
               >
                 {/* Header */}
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <h3 className="font-medium text-warm-100">{submission.name}</h3>
-                    <a
-                      href={`mailto:${submission.email}`}
-                      className="text-sm text-warm-400 hover:text-warm-300"
-                    >
-                      {submission.email}
-                    </a>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-warm-100">{submission.name}</h3>
+                      {!submission.email && (
+                        <span className="inline-flex items-center rounded-md bg-warm-700/50 px-2 py-0.5 text-xs font-medium text-warm-300 border border-warm-600/30">
+                          Anonymous
+                        </span>
+                      )}
+                    </div>
+                    {submission.email ? (
+                      <a
+                        href={`mailto:${submission.email}`}
+                        className="text-sm text-warm-400 hover:text-warm-300"
+                      >
+                        {submission.email}
+                      </a>
+                    ) : (
+                      <p className="text-sm text-warm-500 italic">
+                        No email provided - cannot reply
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-warm-500">

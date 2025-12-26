@@ -6,11 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "@utils/trpc-provider";
 import { FadeInSection } from "@components/FadeInSection";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
   message: z.string().min(10, "Message must be at least 10 characters"),
+  website: z.string().max(0), // Honeypot field
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -18,12 +22,14 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showEmail, setShowEmail] = useState(true);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
   });
@@ -48,6 +54,16 @@ export default function Contact() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await submitMutation.mutateAsync(data);
   };
+
+  const toggleEmailField = () => {
+    setShowEmail(!showEmail);
+    if (showEmail) {
+      // Clear email value when hiding
+      setValue("email", "");
+    }
+  };
+
+  const isPending = submitMutation.isPending || isSubmitting;
 
   return (
     <main className="min-h-screen bg-warm-950 py-16 px-4 sm:py-24 md:px-8 md:py-32">
@@ -88,11 +104,12 @@ export default function Contact() {
               <label htmlFor="name" className="block text-sm font-medium text-warm-100">
                 Name
               </label>
-              <input
+              <Input
                 type="text"
                 id="name"
                 {...register("name")}
-                className="mt-2 w-full rounded-lg border border-warm-600/50 bg-warm-900/50 px-4 py-2.5 text-warm-100 placeholder-warm-500 transition focus:border-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-400/20"
+                disabled={isPending}
+                className="mt-2 border-warm-600/50 bg-warm-900/50 text-warm-100 placeholder-warm-500 focus:border-warm-400 focus:ring-warm-400/20"
                 placeholder="Your name"
               />
               {errors.name && (
@@ -102,31 +119,66 @@ export default function Contact() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-warm-100">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                {...register("email")}
-                className="mt-2 w-full rounded-lg border border-warm-600/50 bg-warm-900/50 px-4 py-2.5 text-warm-100 placeholder-warm-500 transition focus:border-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-400/20"
-                placeholder="your@email.com"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-warm-100">
+                  Email
+                </label>
+                <button
+                  type="button"
+                  onClick={toggleEmailField}
+                  disabled={isPending}
+                  className="text-xs text-warm-400 hover:text-warm-300 underline underline-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {showEmail ? "Make optional" : "Provide email"}
+                </button>
+              </div>
+
+              {showEmail ? (
+                <>
+                  <Input
+                    type="email"
+                    id="email"
+                    {...register("email")}
+                    disabled={isPending}
+                    className="border-warm-600/50 bg-warm-900/50 text-warm-100 placeholder-warm-500 focus:border-warm-400 focus:ring-warm-400/20"
+                    placeholder="your@email.com"
+                  />
+                  <p className="mt-1 text-xs text-warm-500">
+                    I&apos;ll use this to respond to your message
+                  </p>
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
+                  )}
+                </>
+              ) : (
+                <div className="rounded-lg border border-warm-700/30 bg-warm-800/30 px-4 py-3">
+                  <p className="text-sm text-warm-400">
+                    Your message will be sent anonymously. I won&apos;t be able to respond, but I&apos;ll still receive your feedback.
+                  </p>
+                </div>
               )}
             </div>
+
+            {/* Honeypot Field - Hidden from users */}
+            <Input
+              type="text"
+              {...register("website")}
+              className="hidden"
+              tabIndex={-1}
+              autoComplete="off"
+            />
 
             {/* Message Field */}
             <div>
               <label htmlFor="message" className="block text-sm font-medium text-warm-100">
                 Message
               </label>
-              <textarea
+              <Textarea
                 id="message"
                 {...register("message")}
+                disabled={isPending}
                 rows={6}
-                className="mt-2 w-full rounded-lg border border-warm-600/50 bg-warm-900/50 px-4 py-2.5 text-warm-100 placeholder-warm-500 transition focus:border-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-400/20"
+                className="mt-2 border-warm-600/50 bg-warm-900/50 text-warm-100 placeholder-warm-500 focus:border-warm-400 focus:ring-warm-400/20"
                 placeholder="Your message here..."
               />
               {errors.message && (
@@ -135,13 +187,23 @@ export default function Contact() {
             </div>
 
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
-              disabled={isSubmitting || (submitMutation as { isLoading?: boolean }).isLoading}
-              className="w-full rounded-lg bg-warm-500 px-6 py-2.5 font-medium text-warm-950 transition hover:bg-warm-400 disabled:opacity-50"
+              disabled={isPending}
+              className="w-full bg-warm-500 font-medium text-warm-950 hover:bg-warm-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting || (submitMutation as { isLoading?: boolean }).isLoading ? "Sending..." : "Send Message"}
-            </button>
+              {isPending ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Sending...
+                </span>
+              ) : (
+                "Send Message"
+              )}
+            </Button>
           </form>
         </FadeInSection>
       </div>

@@ -23,6 +23,7 @@ import { prisma } from "../db";
 
 type CreateContextOptions = {
   session: Session | null;
+  headers: Headers;
 };
 
 /**
@@ -38,6 +39,7 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
+    headers: opts.headers,
     prisma,
   };
 };
@@ -48,12 +50,13 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (_opts: FetchCreateContextFnOptions) => {
+export const createTRPCContext = async (opts: FetchCreateContextFnOptions) => {
   // Get the session from the server using auth()
   const session = await auth();
 
   return createInnerTRPCContext({
     session,
+    headers: opts.req.headers,
   });
 };
 

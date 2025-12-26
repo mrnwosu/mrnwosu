@@ -65,11 +65,14 @@ model VerificationToken {
 model ContactSubmission {
     id        String   @id @default(cuid())
     name      String
-    email     String
+    email     String?  // Optional - allows anonymous messages
+    ipHash    String?  // SHA-256 hash of IP for anonymous rate limiting
     message   String   @db.Text
     createdAt DateTime @default(now())
 
     @@index([createdAt])
+    @@index([ipHash])
+    @@index([email])
 }
 
 model BlogPost {
