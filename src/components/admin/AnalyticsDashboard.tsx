@@ -2,6 +2,7 @@
 
 import { api } from "@utils/trpc-provider";
 import { VisitorMap } from "./VisitorMap";
+import { ViewsTable } from "./ViewsTable";
 import "leaflet/dist/leaflet.css";
 
 export function AnalyticsDashboard() {
@@ -48,10 +49,18 @@ export function AnalyticsDashboard() {
           subtitle="All time unique IPs"
         />
         <StatCard
-          title="Countries"
+          title="Cities"
           value={geoData?.length ?? 0}
-          subtitle="Geographic reach"
+          subtitle="Unique locations"
         />
+      </div>
+
+      {/* Page Views Table */}
+      <div className="rounded-xl border border-warm-700/30 bg-warm-800/50 p-6">
+        <h2 className="mb-4 text-xl font-semibold text-warm-100">
+          Page Views
+        </h2>
+        <ViewsTable />
       </div>
 
       {/* Visitor Map */}

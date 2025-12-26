@@ -37,6 +37,7 @@ export async function getGeolocationFromIp(
 ): Promise<GeolocationData> {
   try {
     // Skip geolocation for localhost/private IPs
+    // Use a test location (San Francisco) so it shows on the map during development
     if (
       ip === "127.0.0.1" ||
       ip === "::1" ||
@@ -45,12 +46,12 @@ export async function getGeolocationFromIp(
       ip.startsWith("172.")
     ) {
       return {
-        country: "Local",
-        countryCode: "LOCAL",
-        region: "Local",
-        city: "Development",
-        latitude: 0,
-        longitude: 0,
+        country: "United States",
+        countryCode: "US",
+        region: "California",
+        city: "San Francisco (Local Dev)",
+        latitude: 37.7749,
+        longitude: -122.4194,
       };
     }
 

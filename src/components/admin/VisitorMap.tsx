@@ -25,6 +25,7 @@ const Popup = dynamic(
 interface LocationData {
   country: string;
   countryCode: string;
+  city: string;
   count: number;
   latitude: number;
   longitude: number;
@@ -61,6 +62,8 @@ export function VisitorMap({ locations }: VisitorMapProps) {
         zoom={2}
         style={{ height: "100%", width: "100%" }}
         className="z-0"
+        scrollWheelZoom={false}
+        attributionControl={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -75,7 +78,7 @@ export function VisitorMap({ locations }: VisitorMapProps) {
 
           return (
             <CircleMarker
-              key={location.countryCode}
+              key={`${location.city}-${location.countryCode}`}
               center={[location.latitude, location.longitude]}
               radius={size}
               fillColor="#f97316"
@@ -86,8 +89,9 @@ export function VisitorMap({ locations }: VisitorMapProps) {
             >
               <Popup>
                 <div className="text-sm">
-                  <div className="font-semibold">{location.country}</div>
-                  <div className="text-warm-600">
+                  <div className="font-semibold">{location.city}</div>
+                  <div className="text-xs text-warm-500">{location.country}</div>
+                  <div className="mt-1 text-warm-600">
                     {location.count} {location.count === 1 ? "visit" : "visits"}
                   </div>
                 </div>

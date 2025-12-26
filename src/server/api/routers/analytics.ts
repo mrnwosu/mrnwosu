@@ -45,7 +45,7 @@ export const analyticsRouter = createTRPCRouter({
     }),
 
   /**
-   * Get geographic distribution for heatmap
+   * Get geographic distribution for heatmap (grouped by city)
    */
   getGeographicData: adminProcedure.query(async ({ ctx }) => {
     // Get all page views with location data
@@ -64,12 +64,13 @@ export const analyticsRouter = createTRPCRouter({
       },
     });
 
-    // Group by country and count
-    const countryStats: Record<
+    // Group by city + country combination (cities can have same name in different countries)
+    const cityStats: Record<
       string,
       {
         country: string;
         countryCode: string;
+        city: string;
         count: number;
         latitude: number;
         longitude: number;
@@ -77,20 +78,25 @@ export const analyticsRouter = createTRPCRouter({
     > = {};
 
     pageViews.forEach((view) => {
-      const code = view.countryCode!;
-      if (!countryStats[code]) {
-        countryStats[code] = {
-          country: view.country || code,
-          countryCode: code,
+      // Create unique key: "City, Country" or just "Country" if no city
+      const cityName = view.city || "Unknown";
+      const countryCode = view.countryCode || "Unknown";
+      const key = `${cityName}, ${countryCode}`;
+
+      if (!cityStats[key]) {
+        cityStats[key] = {
+          country: view.country || view.countryCode || "Unknown",
+          countryCode: view.countryCode || "Unknown",
+          city: cityName,
           count: 0,
           latitude: view.latitude || 0,
           longitude: view.longitude || 0,
         };
       }
-      countryStats[code].count++;
+      cityStats[key].count++;
     });
 
-    return Object.values(countryStats);
+    return Object.values(cityStats);
   }),
 
   /**
@@ -216,5 +222,105 @@ export const analyticsRouter = createTRPCRouter({
         country: c.country || c.countryCode,
         views: c._count.countryCode,
       }));
+    }),
+
+  /**
+   * Get recent page views with sorting and pagination
+   */
+  getRecentViews: adminProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().min(1).max(100).default(50),
+          offset: z.number().min(0).default(0),
+          sortBy: z
+            .enum(["createdAt", "pathname", "country", "city"])
+            .default("createdAt"),
+          sortOrder: z.enum(["asc", "desc"]).default("desc"),
+          groupBy: z
+            .enum(["none", "pathname", "country", "city"])
+            .default("none"),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input?.limit ?? 50;
+      const offset = input?.offset ?? 0;
+      const sortBy = input?.sortBy ?? "createdAt";
+      const sortOrder = input?.sortOrder ?? "desc";
+      const groupBy = input?.groupBy ?? "none";
+
+      // If no grouping, return individual views
+      if (groupBy === "none") {
+        const [views, total] = await Promise.all([
+          ctx.prisma.pageView.findMany({
+            take: limit,
+            skip: offset,
+            orderBy: {
+              [sortBy]: sortOrder,
+            },
+            select: {
+              id: true,
+              pathname: true,
+              country: true,
+              countryCode: true,
+              city: true,
+              createdAt: true,
+            },
+          }),
+          ctx.prisma.pageView.count(),
+        ]);
+
+        return {
+          views: views.map((v) => ({
+            id: v.id,
+            pathname: v.pathname,
+            country: v.country,
+            countryCode: v.countryCode,
+            city: v.city,
+            createdAt: v.createdAt,
+            count: 1,
+          })),
+          total,
+          hasMore: offset + limit < total,
+          isGrouped: false,
+        };
+      }
+
+      // Grouped views
+      // groupBy is guaranteed to be "pathname" | "country" | "city" here since we checked for "none" above
+      const grouped = await ctx.prisma.pageView.groupBy({
+        by: [groupBy],
+        _count: {
+          id: true,
+        },
+        orderBy: {
+          _count: {
+            id: sortOrder,
+          },
+        },
+        take: limit,
+        skip: offset,
+      });
+
+      const total = await ctx.prisma.pageView.groupBy({
+        by: [groupBy],
+        _count: { id: true },
+      });
+
+      return {
+        views: grouped.map((g) => ({
+          id: g[groupBy] || "Unknown",
+          pathname: groupBy === "pathname" ? g[groupBy] : null,
+          country: groupBy === "country" ? g[groupBy] : null,
+          countryCode: null,
+          city: groupBy === "city" ? g[groupBy] : null,
+          createdAt: null,
+          count: g._count.id,
+        })),
+        total: total.length,
+        hasMore: offset + limit < total.length,
+        isGrouped: true,
+      };
     }),
 });

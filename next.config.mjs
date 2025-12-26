@@ -8,7 +8,9 @@
 
 /** @type {import("next").NextConfig} */
 const config = {
-  reactStrictMode: true,
+  // Disabled due to incompatibility with react-leaflet
+  // Leaflet's MapContainer cannot handle React Strict Mode's double-mounting
+  reactStrictMode: false,
 
   images: {
     remotePatterns: [
