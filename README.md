@@ -28,8 +28,12 @@ I'm a software engineer who enjoys building clean, performant web applications a
 ## GitHub Stats
 
 <p>
-  <img height="170" src="https://github-readme-stats.vercel.app/api?username=mrnwosu&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true" />
-  <img height="170" src="https://github-readme-stats.vercel.app/api/top-langs/?username=mrnwosu&theme=github_dark&hide_border=true&layout=compact&langs_count=8" />
+  <img height="170" src="https://github-readme-stats.vercel.app/api?username=mrnwosu&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true&show_icons=true&cache_seconds=1800" />
+  <img height="170" src="https://github-readme-stats.vercel.app/api/top-langs/?username=mrnwosu&theme=github_dark&hide_border=true&layout=compact&langs_count=8&cache_seconds=1800" />
+</p>
+
+<p>
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=mrnwosu&theme=github-dark-blue&hide_border=true" />
 </p>
 
 ## Let's Connect
