@@ -3,6 +3,7 @@
 import { api } from "@utils/trpc-provider";
 import { VisitorMap } from "./VisitorMap";
 import { ViewsTable } from "./ViewsTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "leaflet/dist/leaflet.css";
 
 export function AnalyticsDashboard() {
@@ -55,27 +56,41 @@ export function AnalyticsDashboard() {
         />
       </div>
 
-      {/* Page Views Table */}
-      <div className="rounded-xl border border-warm-700/30 bg-warm-800/50 p-6">
-        <h2 className="mb-4 text-xl font-semibold text-warm-100">
-          Page Views
-        </h2>
-        <ViewsTable />
-      </div>
+      {/* Page Views & Map Tabs */}
+      <Tabs defaultValue="views" className="w-full">
+        <TabsList className="mb-4 inline-flex h-9 items-center justify-center rounded-lg border border-warm-700/20 bg-warm-900/30 p-1 text-warm-400">
+          <TabsTrigger
+            value="views"
+            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-warm-800/70 data-[state=active]:text-warm-100 data-[state=active]:shadow-sm"
+          >
+            Page Views
+          </TabsTrigger>
+          <TabsTrigger
+            value="map"
+            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-warm-800/70 data-[state=active]:text-warm-100 data-[state=active]:shadow-sm"
+          >
+            Visitor Map
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Visitor Map */}
-      <div className="rounded-xl border border-warm-700/30 bg-warm-800/50 p-6">
-        <h2 className="mb-4 text-xl font-semibold text-warm-100">
-          Visitor Locations
-        </h2>
-        {geoData && geoData.length > 0 ? (
-          <VisitorMap locations={geoData} />
-        ) : (
-          <div className="flex h-[500px] items-center justify-center rounded-xl border border-warm-700/30 bg-warm-900/30 text-warm-500">
-            No location data available yet
+        <TabsContent value="views">
+          <div className="rounded-xl border border-warm-700/30 bg-warm-800/50 p-6">
+            <ViewsTable />
           </div>
-        )}
-      </div>
+        </TabsContent>
+
+        <TabsContent value="map">
+          <div className="rounded-xl border border-warm-700/30 bg-warm-800/50 p-6">
+            {geoData && geoData.length > 0 ? (
+              <VisitorMap locations={geoData} />
+            ) : (
+              <div className="flex h-[500px] items-center justify-center rounded-xl border border-warm-700/30 bg-warm-900/30 text-warm-500">
+                No location data available yet
+              </div>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Popular Pages & Top Countries */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
