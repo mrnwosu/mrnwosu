@@ -3,7 +3,7 @@
  * Call this after create/update/delete operations.
  */
 export async function revalidateBlog(slug?: string): Promise<void> {
-  const paths = ["/blog"];
+  const paths = ["/blog", "/sitemap.xml"];
 
   // Also revalidate the specific post page if slug is provided
   if (slug) {
